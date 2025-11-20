@@ -1,0 +1,52 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+:root {
+  --background: #ffffff;
+  --foreground: #1a1a1a;
+  --pink-primary: #ff69b4; /* Hot Pink */
+  --pink-light: #ffe6f2;
+  --pink-dark: #c71585; /* Medium Violet Red */
+  --gold: #d4af37;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #ffffff; /* Force light/white theme as requested */
+    --foreground: #1a1a1a;
+  }
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+  overflow-x: hidden;
+}
+
+/* Custom Utilities */
+.text-gradient-pink {
+  background: linear-gradient(to right, #ff69b4, #ff1493, #c71585);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  background-size: 200% auto;
+  animation: shine 3s linear infinite;
+}
+
+@keyframes shine {
+  to {
+    background-position: 200% center;
+  }
+}
+
+.glass-panel {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 192, 203, 0.3);
+  box-shadow: 0 4px 20px rgba(255, 105, 180, 0.1);
+}
