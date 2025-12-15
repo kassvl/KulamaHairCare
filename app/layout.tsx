@@ -40,7 +40,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body
-        className={`${syne.variable} ${playfair.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col bg-[#0a0a0a] text-white`}
+        className={`${syne.variable} ${playfair.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col bg-white text-gray-900`}
       >
         <LanguageProvider>
           <CustomCursor />

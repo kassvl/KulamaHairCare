@@ -32,12 +32,12 @@ export default function GalleryPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] pt-24 pb-20">
+    <div className="min-h-screen bg-gradient-to-b from-pink-50 to-white pt-24 pb-20">
       {/* Header */}
       <div className="text-center px-6 mb-12">
-        <span className="text-[#c9a962] text-sm uppercase tracking-widest mb-2 block">Portfolio</span>
-        <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">Gallery</h1>
-        <p className="text-white/50 max-w-md mx-auto">Explore our collection of artistry.</p>
+        <span className="text-pink-500 text-sm uppercase tracking-widest mb-2 block">Portfolio</span>
+        <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Gallery</h1>
+        <p className="text-gray-500 max-w-md mx-auto">Explore our collection of artistry.</p>
       </div>
 
       {/* Filters */}
@@ -47,7 +47,9 @@ export default function GalleryPage() {
             key={cat}
             onClick={() => setFilter(cat)}
             className={`px-4 py-2 rounded-full text-sm transition-colors ${
-              filter === cat ? "bg-[#c9a962] text-black" : "bg-white/5 text-white/60 hover:text-white"
+              filter === cat 
+                ? "bg-pink-500 text-white shadow-md shadow-pink-200" 
+                : "bg-white border border-pink-200 text-gray-600 hover:border-pink-300 hover:text-pink-500"
             }`}
           >
             {cat}
@@ -65,7 +67,7 @@ export default function GalleryPage() {
               animate={{ opacity: 1 }}
               transition={{ delay: idx * 0.05 }}
               onClick={() => setSelectedId(item.id)}
-              className="mb-4 break-inside-avoid cursor-pointer group relative rounded-xl overflow-hidden"
+              className="mb-4 break-inside-avoid cursor-pointer group relative rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow"
             >
               <img 
                 src={item.src} 
@@ -73,9 +75,9 @@ export default function GalleryPage() {
                 loading="lazy"
                 className="w-full h-auto group-hover:scale-105 transition-transform duration-500"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
                 <div>
-                  <span className="text-[#c9a962] text-xs uppercase tracking-wider">{item.category}</span>
+                  <span className="text-pink-300 text-xs uppercase tracking-wider">{item.category}</span>
                   <h3 className="text-white font-semibold">{item.title}</h3>
                 </div>
               </div>
@@ -90,7 +92,7 @@ export default function GalleryPage() {
           href="https://instagram.com"
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[#833ab4] via-[#fd1d1d] to-[#fcb045] text-white rounded-full font-medium"
+          className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[#833ab4] via-[#fd1d1d] to-[#fcb045] text-white rounded-full font-medium shadow-lg"
         >
           <Instagram size={20} />
           @kulama_braids
@@ -105,7 +107,7 @@ export default function GalleryPage() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setSelectedId(null)}
-            className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center p-4"
+            className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4"
           >
             <button onClick={() => setSelectedId(null)} className="absolute top-6 right-6 text-white/60 hover:text-white">
               <X size={28} />

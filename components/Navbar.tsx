@@ -30,16 +30,16 @@ export const Navbar = () => {
     <>
       <nav
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 px-6 py-4 ${
-          scrolled ? "bg-[#0a0a0a]/90 backdrop-blur-md border-b border-white/5" : "bg-transparent"
+          scrolled ? "bg-white/90 backdrop-blur-md border-b border-pink-100 shadow-sm" : "bg-transparent"
         }`}
       >
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           {/* Logo */}
           <Link href="/" className="flex flex-col group">
-            <div className="text-2xl font-bold tracking-[0.2em] text-white">
-              KULAMA<span className="text-[#c9a962]">.</span>
+            <div className="text-2xl font-bold tracking-[0.2em] text-gray-900">
+              KULAMA<span className="text-pink-500">.</span>
             </div>
-            <span className="text-[9px] font-medium tracking-[0.3em] text-white/40 uppercase group-hover:text-[#c9a962] transition-colors">
+            <span className="text-[9px] font-medium tracking-[0.3em] text-gray-400 uppercase group-hover:text-pink-500 transition-colors">
               {t('wroclaw')}
             </span>
           </Link>
@@ -53,12 +53,12 @@ export const Navbar = () => {
                   key={link.name}
                   href={link.href}
                   className={`relative px-4 py-2 text-sm font-medium uppercase tracking-wider transition-colors ${
-                    isActive ? "text-[#c9a962]" : "text-white/60 hover:text-white"
+                    isActive ? "text-pink-500" : "text-gray-600 hover:text-pink-500"
                   }`}
                 >
                   {link.name}
                   {isActive && (
-                    <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1 h-1 bg-[#c9a962] rounded-full" />
+                    <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1 h-1 bg-pink-500 rounded-full" />
                   )}
                 </Link>
               );
@@ -69,32 +69,32 @@ export const Navbar = () => {
           <div className="hidden md:flex items-center gap-2">
             <button 
               onClick={toggleLanguage}
-              className="flex items-center gap-2 px-3 py-2 text-sm text-white/60 hover:text-[#c9a962] transition-colors uppercase"
+              className="flex items-center gap-2 px-3 py-2 text-sm text-gray-600 hover:text-pink-500 transition-colors uppercase"
             >
               <Globe size={16} />
               {language.toUpperCase()}
             </button>
 
-            <button className="p-2 text-white/60 hover:text-[#c9a962] transition-colors">
+            <button className="p-2 text-gray-600 hover:text-pink-500 transition-colors">
               <ShoppingBag size={20} />
             </button>
 
-            <div className="w-px h-5 bg-white/10 mx-2" />
+            <div className="w-px h-5 bg-gray-200 mx-2" />
 
             <Link
               href="/iletisim"
-              className="px-4 py-2 text-sm font-medium uppercase tracking-wider text-[#0a0a0a] bg-[#c9a962] rounded-full hover:bg-[#e8d5a3] transition-colors"
+              className="px-4 py-2 text-sm font-medium uppercase tracking-wider text-white bg-pink-500 rounded-full hover:bg-pink-600 transition-colors shadow-md shadow-pink-200"
             >
               Book Now
             </Link>
           </div>
 
-          {/* Mobile Menu Button */}
+          {/* Mobile */}
           <div className="flex items-center gap-4 md:hidden">
-            <button onClick={toggleLanguage} className="text-sm font-bold text-white/60">
+            <button onClick={toggleLanguage} className="text-sm font-bold text-gray-600">
               {language.toUpperCase()}
             </button>
-            <button className="text-white" onClick={() => setIsOpen(!isOpen)}>
+            <button className="text-gray-900" onClick={() => setIsOpen(!isOpen)}>
               {isOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
           </div>
@@ -108,7 +108,7 @@ export const Navbar = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-40 md:hidden bg-[#0a0a0a]/98"
+            className="fixed inset-0 z-40 md:hidden bg-white"
           >
             <div className="flex flex-col items-center justify-center h-full gap-6">
               {navLinks.map((link) => (
@@ -117,7 +117,7 @@ export const Navbar = () => {
                   href={link.href}
                   onClick={() => setIsOpen(false)}
                   className={`text-2xl font-bold uppercase tracking-wider ${
-                    pathname === link.href ? "text-[#c9a962]" : "text-white"
+                    pathname === link.href ? "text-pink-500" : "text-gray-900"
                   }`}
                 >
                   {link.name}

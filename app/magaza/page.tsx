@@ -26,28 +26,28 @@ export default function ShopPage() {
     .filter(p => p.name.toLowerCase().includes(search.toLowerCase()));
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] pt-24 pb-20">
+    <div className="min-h-screen bg-gradient-to-b from-pink-50 to-white pt-24 pb-20">
       {/* Header */}
       <div className="text-center px-6 mb-12">
-        <span className="text-[#c9a962] text-sm uppercase tracking-widest mb-2 block">Premium Collection</span>
-        <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">Shop</h1>
-        <p className="text-white/50 max-w-md mx-auto">Discover premium braiding products.</p>
+        <span className="text-pink-500 text-sm uppercase tracking-widest mb-2 block">Premium Collection</span>
+        <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Shop</h1>
+        <p className="text-gray-500 max-w-md mx-auto">Discover premium braiding products.</p>
       </div>
 
       <div className="max-w-7xl mx-auto px-6">
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Sidebar */}
           <aside className="lg:w-56 shrink-0">
-            <div className="glass rounded-xl p-5 sticky top-24">
+            <div className="bg-white rounded-xl p-5 border border-pink-100 shadow-sm sticky top-24">
               {/* Search */}
               <div className="relative mb-6">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-white/30" size={16} />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-300" size={16} />
                 <input 
                   type="text"
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   placeholder="Search..."
-                  className="w-full bg-white/5 border border-white/10 rounded-lg pl-9 pr-3 py-2.5 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-[#c9a962]/50"
+                  className="w-full bg-pink-50 border border-pink-100 rounded-lg pl-9 pr-3 py-2.5 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-pink-300"
                 />
               </div>
 
@@ -58,7 +58,9 @@ export default function ShopPage() {
                     key={cat}
                     onClick={() => setCategory(cat)}
                     className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors ${
-                      category === cat ? "bg-[#c9a962] text-black font-medium" : "text-white/60 hover:bg-white/5"
+                      category === cat 
+                        ? "bg-pink-500 text-white font-medium shadow-sm" 
+                        : "text-gray-600 hover:bg-pink-50 hover:text-pink-500"
                     }`}
                   >
                     {cat}
@@ -70,7 +72,7 @@ export default function ShopPage() {
 
           {/* Products */}
           <div className="flex-1">
-            <p className="text-white/40 text-sm mb-6">{filtered.length} products</p>
+            <p className="text-gray-400 text-sm mb-6">{filtered.length} products</p>
             
             <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
               {filtered.map((product, idx) => (
@@ -81,7 +83,7 @@ export default function ShopPage() {
                   transition={{ delay: idx * 0.05 }}
                   className="group"
                 >
-                  <div className="relative rounded-xl overflow-hidden bg-white/5 mb-3">
+                  <div className="relative rounded-xl overflow-hidden bg-pink-50 mb-3 shadow-sm">
                     <div className="aspect-square">
                       <img 
                         src={product.image}
@@ -92,7 +94,7 @@ export default function ShopPage() {
                     </div>
                     
                     {product.bestseller && (
-                      <div className="absolute top-3 left-3 px-2 py-1 rounded-full bg-[#c9a962] text-[10px] text-black font-semibold uppercase">
+                      <div className="absolute top-3 left-3 px-2 py-1 rounded-full bg-pink-500 text-[10px] text-white font-semibold uppercase shadow-sm">
                         Bestseller
                       </div>
                     )}
@@ -100,24 +102,24 @@ export default function ShopPage() {
                     <div className="absolute bottom-3 left-3 right-3 flex gap-2 opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all">
                       <button 
                         onClick={() => setQuickView(product)}
-                        className="flex-1 bg-white/90 text-black text-xs font-medium py-2 rounded-lg hover:bg-white transition-colors"
+                        className="flex-1 bg-white text-pink-500 text-xs font-medium py-2 rounded-lg hover:bg-pink-50 transition-colors shadow-md"
                       >
                         Quick View
                       </button>
-                      <button className="w-9 h-9 flex items-center justify-center bg-[#c9a962] rounded-lg">
-                        <ShoppingBag size={14} className="text-black" />
+                      <button className="w-9 h-9 flex items-center justify-center bg-pink-500 rounded-lg shadow-md">
+                        <ShoppingBag size={14} className="text-white" />
                       </button>
                     </div>
                   </div>
                   
                   <div className="flex items-center gap-1 mb-1">
-                    <Star size={12} className="text-[#c9a962] fill-[#c9a962]" />
-                    <span className="text-xs text-white/60">{product.rating}</span>
+                    <Star size={12} className="text-pink-400 fill-pink-400" />
+                    <span className="text-xs text-gray-500">{product.rating}</span>
                   </div>
-                  <h3 className="text-sm font-medium text-white group-hover:text-[#c9a962] transition-colors line-clamp-1">
+                  <h3 className="text-sm font-medium text-gray-900 group-hover:text-pink-500 transition-colors line-clamp-1">
                     {product.name}
                   </h3>
-                  <p className="text-[#c9a962] text-sm font-semibold">{product.price} PLN</p>
+                  <p className="text-pink-500 text-sm font-semibold">{product.price} PLN</p>
                 </motion.div>
               ))}
             </div>
@@ -125,7 +127,7 @@ export default function ShopPage() {
         </div>
       </div>
 
-      {/* Quick View Modal */}
+      {/* Quick View */}
       <AnimatePresence>
         {quickView && (
           <motion.div
@@ -133,48 +135,48 @@ export default function ShopPage() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setQuickView(null)}
-            className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4"
+            className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4"
           >
             <motion.div
               initial={{ scale: 0.95 }}
               animate={{ scale: 1 }}
               exit={{ scale: 0.95 }}
               onClick={(e) => e.stopPropagation()}
-              className="glass rounded-2xl max-w-3xl w-full overflow-hidden"
+              className="bg-white rounded-2xl max-w-3xl w-full overflow-hidden shadow-2xl"
             >
-              <button onClick={() => setQuickView(null)} className="absolute top-4 right-4 text-white/60 hover:text-white z-10">
+              <button onClick={() => setQuickView(null)} className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 z-10">
                 <X size={24} />
               </button>
               
               <div className="grid md:grid-cols-2">
-                <div className="aspect-square">
+                <div className="aspect-square bg-pink-50">
                   <img src={quickView.image.replace('w=400', 'w=600')} alt={quickView.name} className="w-full h-full object-cover" />
                 </div>
                 <div className="p-6 flex flex-col">
-                  <span className="text-[#c9a962] text-xs uppercase tracking-wider mb-1">{quickView.category}</span>
-                  <h2 className="text-2xl font-bold text-white mb-3">{quickView.name}</h2>
+                  <span className="text-pink-500 text-xs uppercase tracking-wider mb-1">{quickView.category}</span>
+                  <h2 className="text-2xl font-bold text-gray-900 mb-3">{quickView.name}</h2>
                   
                   <div className="flex items-center gap-2 mb-4">
                     <div className="flex">
                       {[...Array(5)].map((_, i) => (
-                        <Star key={i} size={14} className={i < Math.floor(quickView.rating) ? "text-[#c9a962] fill-[#c9a962]" : "text-white/20"} />
+                        <Star key={i} size={14} className={i < Math.floor(quickView.rating) ? "text-pink-400 fill-pink-400" : "text-gray-200"} />
                       ))}
                     </div>
-                    <span className="text-white/40 text-sm">{quickView.rating}</span>
+                    <span className="text-gray-400 text-sm">{quickView.rating}</span>
                   </div>
 
-                  <p className="text-white/50 text-sm mb-6 flex-1">
+                  <p className="text-gray-500 text-sm mb-6 flex-1">
                     Premium quality product perfect for creating stunning braided styles.
                   </p>
 
-                  <div className="text-2xl font-bold text-white mb-6">{quickView.price} PLN</div>
+                  <div className="text-2xl font-bold text-gray-900 mb-6">{quickView.price} PLN</div>
 
                   <div className="flex gap-3">
                     <Button size="lg" className="flex-1">
                       <ShoppingBag size={18} />
                       Add to Cart
                     </Button>
-                    <button className="w-12 h-12 rounded-full glass flex items-center justify-center text-white/60 hover:text-red-500 transition-colors">
+                    <button className="w-12 h-12 rounded-full border-2 border-pink-200 flex items-center justify-center text-gray-400 hover:text-pink-500 hover:border-pink-300 transition-colors">
                       <Heart size={20} />
                     </button>
                   </div>

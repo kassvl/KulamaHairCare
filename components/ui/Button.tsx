@@ -24,9 +24,9 @@ export const Button = ({
 }: ButtonProps) => {
   
   const variants = {
-    primary: "bg-[#c9a962] text-[#0a0a0a] hover:bg-[#e8d5a3] font-semibold shadow-lg shadow-[#c9a962]/20",
-    outline: "border border-[#c9a962]/30 text-[#c9a962] hover:bg-[#c9a962]/10 hover:border-[#c9a962]/50",
-    ghost: "text-[#c9a962] hover:bg-[#c9a962]/10",
+    primary: "bg-pink-500 text-white hover:bg-pink-600 font-semibold shadow-lg shadow-pink-200",
+    outline: "border-2 border-pink-200 text-pink-500 hover:bg-pink-50 hover:border-pink-300",
+    ghost: "text-pink-500 hover:bg-pink-50",
   };
 
   const sizes = {
@@ -37,24 +37,18 @@ export const Button = ({
 
   return (
     <motion.button
-      whileHover={{ scale: 1.02, y: -2 }}
+      whileHover={{ scale: 1.02 }}
       whileTap={{ scale: 0.98 }}
       transition={{ duration: 0.2 }}
       className={cn(
-        "relative rounded-full transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-50 overflow-hidden group",
+        "rounded-full transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-50",
         variants[variant],
         sizes[size],
         className
       )}
       {...props}
     >
-      {/* Shimmer effect */}
-      <span className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 bg-gradient-to-r from-transparent via-white/20 to-transparent" />
-      
-      {/* Content */}
-      <span className="relative z-10 flex items-center gap-2">
-        {children}
-      </span>
+      {children}
     </motion.button>
   );
 };
