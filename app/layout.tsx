@@ -1,13 +1,24 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Syne, Playfair_Display, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { LanguageProvider } from "@/context/LanguageContext";
+import { CustomCursor } from "@/components/CustomCursor";
+import { SmoothScroll } from "@/components/SmoothScroll";
+import { PageTransition } from "@/components/PageTransition";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const syne = Syne({
+  variable: "--font-syne",
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800"],
+});
+
+const playfair = Playfair_Display({
+  variable: "--font-playfair",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  style: ["normal", "italic"],
 });
 
 const geistMono = Geist_Mono({
@@ -16,8 +27,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Kulama Hair Care & Braids",
-  description: "Modern hair braiding and care services.",
+  title: "KULAMA | Luxury Hair Art & Braiding Studio",
+  description: "Premium hair braiding and care artistry in Wroclaw. Where tradition meets modern elegance.",
+  keywords: ["braids", "hair care", "wroclaw", "luxury", "hair art"],
 };
 
 export default function RootLayout({
@@ -26,16 +38,21 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className="dark">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col bg-white text-[#1a1a1a]`}
+        className={`${syne.variable} ${playfair.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col bg-[#0a0a0a] text-white`}
       >
         <LanguageProvider>
-          <Navbar />
-          <main className="flex-grow pt-20">
-            {children}
-          </main>
-          <Footer />
+          <CustomCursor />
+          <SmoothScroll>
+            <Navbar />
+            <main className="flex-grow">
+              <PageTransition>
+                {children}
+              </PageTransition>
+            </main>
+            <Footer />
+          </SmoothScroll>
         </LanguageProvider>
       </body>
     </html>
