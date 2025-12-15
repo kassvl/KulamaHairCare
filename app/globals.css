@@ -28,8 +28,19 @@
   --gradient-radial: radial-gradient(ellipse at center, #1a1a1a 0%, #0a0a0a 70%);
 }
 
-* {
-  cursor: none;
+@media (min-width: 768px) {
+  * {
+    cursor: none;
+  }
+}
+
+@keyframes marquee-scroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-marquee {
+  animation: marquee-scroll 25s linear infinite;
 }
 
 html {
