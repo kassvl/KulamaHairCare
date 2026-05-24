@@ -1,0 +1,197 @@
+@import "tailwindcss" source(none);
+@source "../app/**/*.{ts,tsx}";
+@source "../components/**/*.{ts,tsx}";
+
+/* ─────────────────────────────────────────────────────────────
+   KULAMA design tokens — see /design.md (Braided Cathedral)
+   ───────────────────────────────────────────────────────────── */
+@theme {
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-cormorant), "Cormorant Garamond", Georgia, serif;
+  --font-script: var(--font-caveat), "Caveat", cursive;
+
+  --color-paper: #f4ece2;
+  --color-paper-2: #ead9c6;
+  --color-paper-3: #dec5ad;
+
+  --color-ink-900: #2a1810;
+  --color-ink-700: #5c3a28;
+  --color-ink-500: #8c6448;
+  --color-ink-300: #b89274;
+
+  --color-brand-amber: #c97b3f;
+  --color-brand-clay: #a24e2a;
+  --color-brand-gold: #d9a441;
+  --color-brand-deep: #3a1b14;
+
+  --shadow-soft:
+    0 24px 60px -28px rgba(58, 27, 20, 0.25),
+    0 4px 12px -4px rgba(58, 27, 20, 0.1);
+  --shadow-deluxe:
+    0 40px 100px -32px rgba(58, 27, 20, 0.35),
+    0 6px 16px -4px rgba(58, 27, 20, 0.18);
+}
+
+:root {
+  color-scheme: light;
+}
+
+html, body, #__next {
+  min-height: 100%;
+  background-color: var(--color-paper);
+  color: var(--color-ink-900);
+}
+
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-family: var(--font-sans);
+  font-feature-settings: "ss01", "cv11";
+}
+
+::selection {
+  background: var(--color-brand-amber);
+  color: var(--color-paper);
+}
+
+/* Paper grain — subtle */
+.bg-paper-grain {
+  background-color: var(--color-paper);
+  background-image:
+    radial-gradient(rgba(58, 27, 20, 0.05) 1px, transparent 1px),
+    radial-gradient(rgba(58, 27, 20, 0.04) 1px, transparent 1px);
+  background-size: 6px 6px, 11px 11px;
+  background-position: 0 0, 3px 3px;
+}
+
+/* Editorial number stat */
+.stat-number {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 500;
+  font-size: clamp(48px, 6vw, 72px);
+  line-height: 1;
+  letter-spacing: -0.03em;
+  color: var(--color-brand-clay);
+}
+
+/* Section label — uppercase tracked */
+.kbd {
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-ink-500);
+}
+
+/* Hairline rule */
+.hairline {
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(58, 27, 20, 0.5),
+    transparent
+  );
+}
+
+/* Centre seam — vertical line down the middle */
+.center-seam {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 1px;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba(58, 27, 20, 0.18) 18%,
+    rgba(58, 27, 20, 0.18) 82%,
+    transparent 100%
+  );
+  pointer-events: none;
+  z-index: 5;
+}
+@media (max-width: 1023px) {
+  .center-seam { display: none; }
+}
+
+/* Soft card */
+.card {
+  background: var(--color-paper);
+  border: 1px solid rgba(58, 27, 20, 0.12);
+  border-radius: 20px;
+  transition:
+    transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1),
+    box-shadow 0.4s ease,
+    border-color 0.4s ease;
+}
+.card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(58, 27, 20, 0.25);
+  box-shadow: var(--shadow-soft);
+}
+
+/* Pill button */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: transform 0.3s ease, background-color 0.3s ease, color 0.3s ease;
+}
+.btn-primary {
+  background: var(--color-ink-900);
+  color: var(--color-paper);
+}
+.btn-primary:hover {
+  background: var(--color-brand-clay);
+  transform: translateY(-2px);
+}
+.btn-ghost {
+  background: transparent;
+  color: var(--color-ink-900);
+  border: 1px solid rgba(58, 27, 20, 0.25);
+}
+.btn-ghost:hover {
+  background: rgba(58, 27, 20, 0.06);
+  transform: translateY(-2px);
+}
+
+/* Live dot pulse */
+.live-dot {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.live-dot::after {
+  content: "";
+  position: absolute;
+  inset: -6px;
+  border-radius: 9999px;
+  background: rgba(217, 164, 65, 0.5);
+  animation: live 1.8s ease-out infinite;
+}
+@keyframes live {
+  0% { transform: scale(0.6); opacity: 0.9; }
+  100% { transform: scale(1.6); opacity: 0; }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+  .live-dot::after { animation: none; }
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-brand-amber);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
