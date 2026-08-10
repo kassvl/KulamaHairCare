@@ -19,7 +19,11 @@ export default function GalleryPage() {
         eyebrow="gallery"
         title={
           <>
-            The <span className="font-script not-italic text-[var(--color-brand-clay)]">looks</span> we&rsquo;ve laid.
+            The{' '}
+            <span className="font-script not-italic pe-3 text-[var(--color-brand-clay)]">
+              looks
+            </span>{' '}
+            we&rsquo;ve laid.
           </>
         }
         description="A small archive of recent appointments. Each photo is a real KULAMA seat, in real Wrocław light."
@@ -27,15 +31,14 @@ export default function GalleryPage() {
       >
         <ul className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {galleryItems.map((item, i) => (
-            <li
-              key={item.caption}
-              className={
-                'group relative aspect-[4/5] overflow-hidden rounded-3xl border border-[rgba(58,27,20,0.12)] bg-gradient-to-br ' +
-                tints[i % tints.length]
-              }
-            >
-              <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_rgba(217,164,65,0.18),transparent_55%)]" />
+            <li key={item.caption} className="tile group aspect-[4/5]">
+              <div className={'tile-media bg-gradient-to-br ' + tints[i % tints.length]}>
+                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_rgba(217,164,65,0.18),transparent_55%)]" />
+              </div>
+              {/* Legibility scrim under the caption */}
+              <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-[rgba(26,10,6,0.75)] to-transparent" />
               <div className="absolute inset-0 flex flex-col justify-end p-5">
+                <span className="index-numeral">{String(i + 1).padStart(2, '0')}</span>
                 <p className="font-script text-2xl text-[var(--color-brand-gold)]">
                   {item.tag}
                 </p>

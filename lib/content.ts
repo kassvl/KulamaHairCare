@@ -5,6 +5,7 @@ export const services = [
     slug: 'box-braids',
     title: 'Box Braids',
     duration: '4–6 h',
+    hours: [4, 6],
     from: '€90',
     description:
       'Classic, square-parted protective braids — sized to your taste, lengths from shoulder to waist. The KULAMA signature.',
@@ -13,6 +14,7 @@ export const services = [
     slug: 'cornrows',
     title: 'Cornrows',
     duration: '2–3 h',
+    hours: [2, 3],
     from: '€55',
     description:
       'Tight, sculptural rows hand-laid against the scalp. Great as a statement style or as a base for protective extensions.',
@@ -21,6 +23,7 @@ export const services = [
     slug: 'knotless-braids',
     title: 'Knotless Braids',
     duration: '5–7 h',
+    hours: [5, 7],
     from: '€110',
     description:
       'A gentler take on box braids — feed-in technique that lifts tension off the scalp for a longer-lasting, weightless finish.',
@@ -29,6 +32,7 @@ export const services = [
     slug: 'twist-styles',
     title: 'Twist Styles',
     duration: '3–5 h',
+    hours: [3, 5],
     from: '€80',
     description:
       'Senegalese twists, passion twists and Marley twists. Soft, romantic texture with the same protective benefits.',

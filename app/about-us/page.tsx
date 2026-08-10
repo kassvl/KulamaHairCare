@@ -8,7 +8,11 @@ export default function AboutPage() {
         eyebrow="about"
         title={
           <>
-            A studio for <span className="font-script not-italic text-[var(--color-brand-clay)]">braids</span> and the people who wear them.
+            A studio for{' '}
+            <span className="font-script not-italic pe-3 text-[var(--color-brand-clay)]">
+              braids
+            </span>{' '}
+            and the people who wear them.
           </>
         }
         description={

@@ -4,6 +4,7 @@ import { Navbar } from '@/components/layout/Navbar'
 import { Footer } from '@/components/layout/Footer'
 import { LenisProvider } from '@/components/layout/LenisProvider'
 import { CenterSeam } from '@/components/layout/CenterSeam'
+import { SiteChrome } from '@/components/layout/SiteChrome'
 import './globals.css'
 
 export const metadata: Metadata = {
@@ -31,11 +32,18 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       className={`${inter.variable} ${cormorant.variable} ${caveat.variable}`}
     >
       <body className="bg-paper-grain text-[var(--color-ink-900)] antialiased">
-        <LenisProvider />
-        <CenterSeam />
-        <Navbar />
-        <main className="relative">{children}</main>
-        <Footer />
+        <SiteChrome
+          chrome={
+            <>
+              <LenisProvider />
+              <CenterSeam />
+            </>
+          }
+          navbar={<Navbar />}
+          footer={<Footer />}
+        >
+          {children}
+        </SiteChrome>
       </body>
     </html>
   )

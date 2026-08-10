@@ -1,80 +1,134 @@
 'use client'
 
-import dynamic from 'next/dynamic'
+import { useRef } from 'react'
 import Link from 'next/link'
-import { motion } from 'framer-motion'
+import { motion, useReducedMotion, useScroll, useSpring, useTransform } from 'framer-motion'
 import { ArrowUpRight, Clock4, MapPin, Sparkles } from 'lucide-react'
 import { brand } from '@/lib/data'
 
-// Load R3F only on the client (it touches `window`/`OffscreenCanvas`).
-const HairScene = dynamic(
-  () => import('@/components/three/HairScene').then((m) => m.HairScene),
-  { ssr: false, loading: () => null },
-)
-
+/**
+ * The entrance: a tall scroll track with a pinned stage. Each layer — watermark,
+ * headline, booking card, veil — is driven off the same scroll progress at a
+ * different rate, so the composition separates in depth as you come down the page.
+ */
 export function SplitHero() {
+  const track = useRef<HTMLDivElement>(null)
+  const reduced = useReducedMotion()
+
+  const { scrollYProgress } = useScroll({
+    target: track,
+    offset: ['start start', 'end start'],
+  })
+
+  // Springing the progress keeps the layers from jittering against Lenis.
+  const progress = useSpring(scrollYProgress, {
+    stiffness: 120,
+    damping: 30,
+    restDelta: 0.001,
+  })
+
+  // Depth ladder — furthest layer drifts least, nearest travels most.
+  const watermarkY = useTransform(progress, [0, 1], ['0%', '-46%'])
+  const watermarkOpacity = useTransform(progress, [0, 0.55], [1, 0])
+  const textY = useTransform(progress, [0, 1], ['0%', '-88%'])
+  const textOpacity = useTransform(progress, [0, 0.62], [1, 0])
+  const cardY = useTransform(progress, [0, 1], ['0%', '-128%'])
+  const cardOpacity = useTransform(progress, [0, 0.68], [1, 0])
+  const veilOpacity = useTransform(progress, [0.15, 0.85], [0, 1])
+
   return (
-    <section className="relative isolate min-h-[100svh] overflow-hidden pt-28 md:pt-32">
-      {/* 3D layer — fixed full-bleed, behind everything */}
-      <HairScene />
-
-      {/* Editorial split */}
-      <div className="relative z-10 mx-auto grid min-h-[calc(100svh-7rem)] max-w-[1400px] grid-cols-1 gap-12 px-6 lg:grid-cols-12">
-        {/* LEFT — story */}
-        <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-          className="flex flex-col justify-end pb-12 lg:col-span-5 lg:pb-20"
-        >
-          <p className="kbd">{brand.tagline}</p>
-          <h1 className="mt-4 font-display text-5xl leading-[1.02] tracking-tight text-[var(--color-ink-900)] sm:text-6xl md:text-7xl">
-            <span className="italic">Personalised</span>
-            <br />
-            hair care &amp;{' '}
-            <span className="font-script not-italic text-[var(--color-brand-clay)]">
-              braiding
-            </span>
-            .
-          </h1>
-          <p className="mt-6 max-w-md text-base leading-relaxed text-[var(--color-ink-700)] md:text-lg">
-            KULAMA gives you expert styling, premium aftercare, and the calm of a
-            studio that takes your hair as seriously as you do.
-          </p>
-
-          <div className="mt-8 flex flex-wrap items-center gap-3">
-            <Link href="/rezervasyon" className="btn btn-primary group">
-              Book Now
-              <ArrowUpRight
-                size={16}
-                className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
-              />
-            </Link>
-            <Link href="/galeri" className="btn btn-ghost">
-              View the gallery
-            </Link>
-          </div>
-        </motion.div>
-
-        {/* CENTRE seam spacer (only renders on lg) — keeps grid aligned */}
-        <div className="hidden lg:col-span-2 lg:block" />
-
-        {/* RIGHT — booking quick card */}
-        <motion.aside
-          initial={{ opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
-          className="flex flex-col justify-end pb-12 lg:col-span-5 lg:pb-20"
-        >
-          <BookingCard />
-        </motion.aside>
-      </div>
-
-      {/* Subtle gradient at bottom so braids fade gracefully */}
+    <section
+      ref={track}
+      className="relative isolate h-[130svh] md:h-[150svh]"
+      aria-label="Book a seat at KULAMA"
+    >
+      {/* Warm light pooling behind the type, in place of a photograph */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-[var(--color-paper)] to-transparent"
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_70%_50%_at_70%_35%,rgba(201,123,63,0.16),transparent_70%),radial-gradient(ellipse_50%_40%_at_15%_80%,rgba(217,164,65,0.12),transparent_70%)]"
       />
+
+      <div className="sticky top-0 flex h-[100svh] flex-col justify-center overflow-hidden pt-28 md:pt-32">
+        {/* Depth 0 — oversized wordmark, the slowest thing on screen */}
+        <motion.div
+          aria-hidden
+          style={reduced ? undefined : { y: watermarkY, opacity: watermarkOpacity }}
+          className="pointer-events-none absolute inset-x-0 top-1/2 -translate-y-1/2 select-none text-center"
+        >
+          <span className="font-display text-[26vw] italic font-medium leading-none tracking-tight text-[rgba(58,27,20,0.055)]">
+            {brand.name}
+          </span>
+        </motion.div>
+
+        {/* Editorial split */}
+        <div className="relative z-10 mx-auto grid w-full max-w-[1400px] grid-cols-1 gap-12 px-6 lg:grid-cols-12">
+          {/* LEFT — story */}
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+            className="lg:col-span-5"
+          >
+            <motion.div style={reduced ? undefined : { y: textY, opacity: textOpacity }}>
+              <p className="kbd">{brand.tagline}</p>
+              <h2 className="mt-4 font-display text-5xl leading-[1.02] tracking-tight text-[var(--color-ink-900)] sm:text-6xl md:text-7xl">
+                <span className="italic">Personalised</span>
+                <br />
+                hair care &amp;{' '}
+                <span className="font-script not-italic text-[var(--color-brand-clay)]">
+                  braiding
+                </span>
+                .
+              </h2>
+              <p className="mt-6 max-w-md text-base leading-relaxed text-[var(--color-ink-700)] md:text-lg">
+                KULAMA gives you expert styling, premium aftercare, and the calm of a
+                studio that takes your hair as seriously as you do.
+              </p>
+
+              <div className="mt-8 flex flex-wrap items-center gap-3">
+                <Link href="/rezervasyon" className="btn btn-primary group">
+                  Book Now
+                  <ArrowUpRight
+                    size={16}
+                    className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+                  />
+                </Link>
+                <Link href="/galeri" className="btn btn-ghost">
+                  View the gallery
+                </Link>
+              </div>
+            </motion.div>
+          </motion.div>
+
+          {/* CENTRE seam spacer (only renders on lg) — keeps grid aligned */}
+          <div className="hidden lg:col-span-2 lg:block" />
+
+          {/* RIGHT — booking quick card */}
+          <motion.aside
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
+            className="lg:col-span-5"
+          >
+            <motion.div style={reduced ? undefined : { y: cardY, opacity: cardOpacity }}>
+              <BookingCard />
+            </motion.div>
+          </motion.aside>
+        </div>
+
+        {/* Veil — closes the entrance so the next section arrives on clean paper */}
+        <motion.div
+          aria-hidden
+          style={reduced ? { opacity: 0 } : { opacity: veilOpacity }}
+          className="pointer-events-none absolute inset-0 bg-[var(--color-paper)]"
+        />
+
+        {/* Subtle gradient at bottom so braids fade gracefully */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-[var(--color-paper)] to-transparent"
+        />
+      </div>
     </section>
   )
 }

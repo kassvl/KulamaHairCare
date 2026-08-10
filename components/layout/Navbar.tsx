@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { Menu, X } from 'lucide-react'
@@ -10,23 +11,40 @@ import { cn } from '@/lib/utils'
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false)
   const [open, setOpen] = useState(false)
+  // The film intro is full-bleed and dark; the bar would be unreadable over it.
+  const [behindIntro, setBehindIntro] = useState(false)
+  const pathname = usePathname()
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 16)
+    const intro = document.getElementById('intro')
+    const onScroll = () => {
+      setScrolled(window.scrollY > 16)
+      setBehindIntro(
+        intro
+          ? window.scrollY < intro.offsetTop + intro.offsetHeight - window.innerHeight * 0.55
+          : false,
+      )
+    }
     onScroll()
     window.addEventListener('scroll', onScroll, { passive: true })
-    return () => window.removeEventListener('scroll', onScroll)
-  }, [])
+    window.addEventListener('resize', onScroll)
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+      window.removeEventListener('resize', onScroll)
+    }
+  }, [pathname])
 
   return (
     <motion.header
       initial={{ y: -24, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.5 }}
+      animate={behindIntro ? { y: -96, opacity: 0 } : { y: 0, opacity: 1 }}
+      transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+      style={{ pointerEvents: behindIntro ? 'none' : 'auto' }}
       className={cn(
-        'fixed inset-x-0 top-0 z-40 transition-all duration-300',
+        'fixed inset-x-0 top-0 z-40 transition-[padding] duration-300',
         scrolled ? 'py-2' : 'py-4',
       )}
+      aria-hidden={behindIntro}
     >
       <div className="mx-auto max-w-[1400px] px-6">
         <nav
