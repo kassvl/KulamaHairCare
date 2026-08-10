@@ -1,5 +1,6 @@
 import { Instagram, Mail, MapPin, Phone } from 'lucide-react'
 import { Section } from '@/components/ui/Section'
+import { ParallaxPlate } from '@/components/ui/ParallaxPlate'
 import { brand } from '@/lib/data'
 
 export default function ContactPage() {
@@ -79,6 +80,12 @@ export default function ContactPage() {
             </li>
           ))}
         </ul>
+
+        <ParallaxPlate
+          src="/img/comb-twist.jpg"
+          alt="A finished comb twist at the KULAMA studio"
+          className="mt-16 h-[48svh] md:mt-20 md:h-[64svh]"
+        />
       </Section>
     </>
   )

@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { ArrowUpRight, Sparkles } from 'lucide-react'
 import { Section } from '@/components/ui/Section'
+import { ParallaxPlate } from '@/components/ui/ParallaxPlate'
 import { offers } from '@/lib/content'
 
 export default function SpecialOffersPage() {
@@ -41,6 +42,12 @@ export default function SpecialOffersPage() {
             </li>
           ))}
         </ul>
+
+        <ParallaxPlate
+          src="/img/stitch-braids.jpg"
+          alt="Stitch braids finished at the KULAMA studio"
+          className="mt-16 h-[48svh] md:mt-20 md:h-[64svh]"
+        />
       </Section>
 
       <Section

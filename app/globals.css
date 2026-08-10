@@ -95,27 +95,6 @@ html {
   );
 }
 
-/* Centre seam — vertical line down the middle */
-.center-seam {
-  position: fixed;
-  top: 0;
-  bottom: 0;
-  left: 50%;
-  width: 1px;
-  background: linear-gradient(
-    180deg,
-    transparent 0%,
-    rgba(58, 27, 20, 0.18) 18%,
-    rgba(58, 27, 20, 0.18) 82%,
-    transparent 100%
-  );
-  pointer-events: none;
-  z-index: 5;
-}
-@media (max-width: 1023px) {
-  .center-seam { display: none; }
-}
-
 /* Soft card */
 .card {
   background: var(--color-paper);

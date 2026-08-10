@@ -42,12 +42,6 @@ export function SplitHero() {
       className="relative isolate h-[130svh] md:h-[150svh]"
       aria-label="Book a seat at KULAMA"
     >
-      {/* Warm light pooling behind the type, in place of a photograph */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_70%_50%_at_70%_35%,rgba(201,123,63,0.16),transparent_70%),radial-gradient(ellipse_50%_40%_at_15%_80%,rgba(217,164,65,0.12),transparent_70%)]"
-      />
-
       <div className="sticky top-0 flex h-[100svh] flex-col justify-center overflow-hidden pt-28 md:pt-32">
         {/* Depth 0 — oversized wordmark, the slowest thing on screen */}
         <motion.div
@@ -153,7 +147,7 @@ function BookingCard() {
 
       <div className="mt-6 grid grid-cols-2 gap-3">
         <Stat icon={<Clock4 size={14} />} label="lead time" value="2–7 days" />
-        <Stat icon={<MapPin size={14} />} label="studio" value="Rynek 12/3" />
+        <Stat icon={<MapPin size={14} />} label="studio" value="Pl. Grunwaldzki" />
         <Stat label="happy clients" value={brand.stats.clients} accent />
         <Stat label="years of practice" value={brand.stats.years} accent />
       </div>

@@ -3,19 +3,18 @@ import { inter, cormorant, caveat } from '@/lib/fonts'
 import { Navbar } from '@/components/layout/Navbar'
 import { Footer } from '@/components/layout/Footer'
 import { LenisProvider } from '@/components/layout/LenisProvider'
-import { CenterSeam } from '@/components/layout/CenterSeam'
 import { SiteChrome } from '@/components/layout/SiteChrome'
 import './globals.css'
 
 export const metadata: Metadata = {
   title: 'KULAMA · Wrocław Hair Care & Braids',
   description:
-    'KULAMA — premium African braiding artistry in Wrocław. Box braids, cornrows, knotless braids and twist styles by expert stylists.',
+    'KULAMA — premium locs and braiding artistry in Wrocław. Loc maintenance, starter locs, women’s braids and men’s cornrows by expert stylists.',
   metadataBase: new URL('https://braidss.xyz'),
   openGraph: {
     title: 'KULAMA · Wrocław Hair Care & Braids',
     description:
-      'Premium African braiding artistry in Wrocław. Book your style at Rynek 12/3.',
+      'Premium African braiding artistry in Wrocław. Book your style at Pl. Grunwaldzki.',
     type: 'website',
     locale: 'en_GB',
   },
@@ -33,12 +32,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     >
       <body className="bg-paper-grain text-[var(--color-ink-900)] antialiased">
         <SiteChrome
-          chrome={
-            <>
-              <LenisProvider />
-              <CenterSeam />
-            </>
-          }
+          chrome={<LenisProvider />}
           navbar={<Navbar />}
           footer={<Footer />}
         >
