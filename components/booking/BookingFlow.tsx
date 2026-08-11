@@ -265,7 +265,25 @@ export function BookingFlow({ dates }: { dates: string[] }) {
             </li>
           </ul>
 
-          {failure && <FieldError>{failure}</FieldError>}
+          {failure && (
+            <>
+              <FieldError>{failure}</FieldError>
+              {/* Never let a failed save cost the studio a client. */}
+              <a
+                href={whatsappHref({
+                  service: service.title,
+                  date,
+                  time,
+                  name: form.name,
+                })}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn btn-ghost mt-3 w-full justify-center"
+              >
+                Send this request on WhatsApp <ArrowUpRight size={16} />
+              </a>
+            </>
+          )}
 
           <button
             type="button"
@@ -290,6 +308,24 @@ export function BookingFlow({ dates }: { dates: string[] }) {
       </motion.aside>
     </div>
   )
+}
+
+/** Pre-fills the studio's WhatsApp with whatever the guest already chose. */
+function whatsappHref({
+  service,
+  date,
+  time,
+  name,
+}: {
+  service: string
+  date: string
+  time: string | null
+  name: string
+}) {
+  const slot = time ? `${formatSlotDate(date)} at ${time}` : 'a time that suits you'
+  const who = name.trim() ? `${name.trim()} here. ` : ''
+  const text = `Hi KULAMA — ${who}I'd like to book ${service} on ${slot}.`
+  return `https://wa.me/${brand.phone.replace(/\D/g, '')}?text=${encodeURIComponent(text)}`
 }
 
 function FieldError({ children }: { children: React.ReactNode }) {
