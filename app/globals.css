@@ -95,27 +95,6 @@ html {
   );
 }
 
-/* Centre seam — vertical line down the middle */
-.center-seam {
-  position: fixed;
-  top: 0;
-  bottom: 0;
-  left: 50%;
-  width: 1px;
-  background: linear-gradient(
-    180deg,
-    transparent 0%,
-    rgba(58, 27, 20, 0.18) 18%,
-    rgba(58, 27, 20, 0.18) 82%,
-    transparent 100%
-  );
-  pointer-events: none;
-  z-index: 5;
-}
-@media (max-width: 1023px) {
-  .center-seam { display: none; }
-}
-
 /* Soft card */
 .card {
   background: var(--color-paper);
@@ -159,6 +138,77 @@ html {
 .btn-ghost:hover {
   background: rgba(58, 27, 20, 0.06);
   transform: translateY(-2px);
+}
+
+/* Scroll cue — a highlight travelling down a hairline */
+.scroll-cue {
+  position: relative;
+  overflow: hidden;
+}
+.scroll-cue::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  top: -40%;
+  height: 40%;
+  background: linear-gradient(
+    180deg,
+    transparent,
+    var(--color-brand-clay),
+    transparent
+  );
+  animation: cue-fall 2.4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+@keyframes cue-fall {
+  0% { transform: translateY(0); opacity: 0; }
+  30% { opacity: 1; }
+  100% { transform: translateY(350%); opacity: 0; }
+}
+
+/* Section eyebrow gets a hairline lead-in */
+.rule-in {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.rule-in::before {
+  content: "";
+  width: 2.25rem;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--color-brand-clay));
+}
+
+/* Editorial index numeral, used to letter sections and cards */
+.index-numeral {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 500;
+  font-size: 0.95rem;
+  letter-spacing: 0.04em;
+  color: var(--color-brand-gold);
+}
+
+/* Media tile — gallery frames and any image-shaped block */
+.tile {
+  position: relative;
+  overflow: hidden;
+  border-radius: 24px;
+  border: 1px solid rgba(58, 27, 20, 0.12);
+  transition:
+    transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1),
+    box-shadow 0.5s ease;
+}
+.tile:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-deluxe);
+}
+.tile-media {
+  position: absolute;
+  inset: 0;
+  transition: transform 0.7s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.tile:hover .tile-media {
+  transform: scale(1.06);
 }
 
 /* Live dot pulse */

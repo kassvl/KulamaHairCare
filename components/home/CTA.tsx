@@ -10,7 +10,11 @@ export function CTA() {
             <div>
               <p className="kbd text-[var(--color-brand-gold)]">your appointment</p>
               <h2 className="mt-3 font-display text-4xl italic font-medium leading-[1.05] tracking-tight md:text-6xl">
-                Time to get your <span className="font-script not-italic text-[var(--color-brand-gold)]">dream</span> hair.
+                Time to get your{' '}
+                <span className="font-script not-italic pe-3 text-[var(--color-brand-gold)]">
+                  dream
+                </span>{' '}
+                hair.
               </h2>
               <p className="mt-5 max-w-md text-[rgba(244,236,226,0.75)] md:text-lg">
                 Meet our team in Wrocław and create your appointment in minutes. We handle the rest.

@@ -21,7 +21,9 @@ export function WhyChooseUs() {
       eyebrow="why choose us"
       title={
         <>
-          Excellence in <span className="font-script not-italic text-[var(--color-brand-clay)]">every</span> detail.
+          Excellence in{' '}
+          <span className="font-script not-italic pe-3 text-[var(--color-brand-clay)]">every</span>{' '}
+          detail.
         </>
       }
       description="The studio runs on three quiet promises — they shape every hour you spend with us."
