@@ -118,7 +118,7 @@ export function AdminDashboard({ dates }: { dates: string[] }) {
           <p className="text-sm leading-relaxed text-[var(--color-ink-700)]">
             <strong>Requests are saved to a local file, not a database.</strong> That is fine on
             your own machine, but on the live site requests can disappear when the server
-            restarts. Set a <code className="rounded bg-[var(--color-paper-2)] px-1.5 py-0.5 text-xs">DATABASE_URL</code>{' '}
+            restarts. Set a <code className="rounded bg-[var(--color-paper-2)] px-1.5 py-0.5 text-xs">DATABASE_URL</code> or Upstash Redis credentials{' '}
             to store them for good.
           </p>
         </div>

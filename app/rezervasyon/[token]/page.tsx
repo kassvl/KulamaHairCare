@@ -17,7 +17,31 @@ export default async function BookingStatusPage({
   params: Promise<{ token: string }>
 }) {
   const { token } = await params
-  const appointment = await getAppointmentByToken(token)
+
+  // A storage outage must not render as "your booking doesn't exist".
+  let appointment: Awaited<ReturnType<typeof getAppointmentByToken>> = null
+  let unreachable = false
+  try {
+    appointment = await getAppointmentByToken(token)
+  } catch (err) {
+    console.error('[booking] lookup failed', err)
+    unreachable = true
+  }
+
+  if (unreachable) {
+    return (
+      <Section
+        eyebrow="reservation"
+        title="We can’t reach your booking right now."
+        description="This is on our side, not yours — your request is still with us. Please refresh in a moment, or message the studio and we’ll confirm by hand."
+        className="pt-40 md:pt-44"
+      >
+        <Link href="/iletisim" className="btn btn-primary">
+          Contact the studio <ArrowUpRight size={16} />
+        </Link>
+      </Section>
+    )
+  }
 
   if (!appointment) {
     return (

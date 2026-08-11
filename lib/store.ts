@@ -6,16 +6,22 @@ import type { Appointment, AppointmentStatus, BookingInput } from '@/lib/appoint
 import { serviceBySlug } from '@/lib/appointments'
 
 /**
- * Appointment persistence.
+ * Appointment persistence, in order of preference:
  *
- * With `DATABASE_URL` set (any Postgres — Neon, Supabase, Vercel Postgres) the
- * data lives in Postgres. Without it we fall back to a JSON file so the site
- * runs locally with zero setup. The fallback is NOT durable on serverless
- * hosting, so `storeKind` is surfaced in the admin panel as a warning.
+ * 1. `DATABASE_URL` — any Postgres (Neon, Supabase, Vercel Postgres).
+ * 2. `UPSTASH_REDIS_REST_URL` + `_TOKEN` — Upstash Redis over its REST API.
+ * 3. A JSON file, so the site runs locally with zero setup.
+ *
+ * The file fallback is NOT durable on serverless hosting, so `storeKind` is
+ * surfaced in the admin panel as a warning.
  */
-export type StoreKind = 'postgres' | 'file'
+export type StoreKind = 'postgres' | 'redis' | 'file'
 
-export const storeKind: StoreKind = process.env.DATABASE_URL ? 'postgres' : 'file'
+export const storeKind: StoreKind = process.env.DATABASE_URL
+  ? 'postgres'
+  : process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN
+    ? 'redis'
+    : 'file'
 
 export interface AppointmentPatch {
   status?: AppointmentStatus
@@ -148,6 +154,86 @@ const postgresDriver: Driver = {
   },
 }
 
+/* ───────────────────────────── Redis driver ──────────────────────────── */
+
+const KEY = {
+  row: (id: string) => `kulama:appt:${id}`,
+  token: (token: string) => `kulama:token:${token}`,
+  index: 'kulama:appts',
+}
+
+let redisClient: import('@upstash/redis').Redis | null = null
+
+async function getRedis() {
+  if (!redisClient) {
+    const { Redis } = await import('@upstash/redis')
+    redisClient = new Redis({
+      url: process.env.UPSTASH_REDIS_REST_URL!,
+      token: process.env.UPSTASH_REDIS_REST_TOKEN!,
+    })
+  }
+  return redisClient
+}
+
+/** Upstash decodes JSON automatically; tolerate both shapes. */
+function parse(value: unknown): Appointment | null {
+  if (!value) return null
+  if (typeof value === 'string') {
+    try {
+      return JSON.parse(value) as Appointment
+    } catch {
+      return null
+    }
+  }
+  return value as Appointment
+}
+
+const redisDriver: Driver = {
+  async list() {
+    const redis = await getRedis()
+    // Newest first — the index is scored by creation time.
+    const ids = await redis.zrange<string[]>(KEY.index, 0, -1, { rev: true })
+    if (!ids.length) return []
+    const rows = await redis.mget<unknown[]>(...ids.map(KEY.row))
+    return rows.map(parse).filter((r): r is Appointment => r !== null)
+  },
+  async byToken(token) {
+    const redis = await getRedis()
+    const id = await redis.get<string>(KEY.token(token))
+    return id ? parse(await redis.get(KEY.row(id))) : null
+  },
+  async byId(id) {
+    const redis = await getRedis()
+    return parse(await redis.get(KEY.row(id)))
+  },
+  async insert(a) {
+    const redis = await getRedis()
+    await Promise.all([
+      redis.set(KEY.row(a.id), JSON.stringify(a)),
+      redis.set(KEY.token(a.token), a.id),
+      redis.zadd(KEY.index, { score: new Date(a.createdAt).getTime(), member: a.id }),
+    ])
+    return a
+  },
+  async patch(id, p) {
+    const redis = await getRedis()
+    const current = parse(await redis.get(KEY.row(id)))
+    if (!current) return null
+    const next: Appointment = {
+      ...current,
+      ...(p.status !== undefined && { status: p.status }),
+      ...(p.date !== undefined && { date: p.date }),
+      ...(p.time !== undefined && { time: p.time }),
+      ...(p.proposedDate !== undefined && { proposedDate: p.proposedDate }),
+      ...(p.proposedTime !== undefined && { proposedTime: p.proposedTime }),
+      ...(p.adminMessage !== undefined && { adminMessage: p.adminMessage }),
+      updatedAt: new Date().toISOString(),
+    }
+    await redis.set(KEY.row(id), JSON.stringify(next))
+    return next
+  },
+}
+
 /* ───────────────────────────── File driver ───────────────────────────── */
 
 const FILE = path.join(process.cwd(), '.data', 'appointments.json')
@@ -202,7 +288,8 @@ const fileDriver: Driver = {
   },
 }
 
-const driver: Driver = storeKind === 'postgres' ? postgresDriver : fileDriver
+const driver: Driver =
+  storeKind === 'postgres' ? postgresDriver : storeKind === 'redis' ? redisDriver : fileDriver
 
 /* ────────────────────────────── Public API ───────────────────────────── */
 
