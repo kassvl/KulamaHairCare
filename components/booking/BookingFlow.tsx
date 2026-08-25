@@ -44,6 +44,21 @@ export function BookingFlow({ dates }: { dates: string[] }) {
     [date, style, overrides],
   )
 
+  // Only offer days that still have a free start time for this style — a day
+  // the studio closed shouldn't sit in the strip inviting a dead end.
+  const openDates = useMemo(
+    () =>
+      allDates.filter((d) =>
+        slotsFor(d, style, overrides).some((t) => !(taken[d] ?? []).includes(t)),
+      ),
+    [allDates, style, overrides, taken],
+  )
+
+  // Keep the selection on a day that actually has room.
+  useEffect(() => {
+    if (openDates.length > 0 && !openDates.includes(date)) setDate(openDates[0]!)
+  }, [openDates, date])
+
   useEffect(() => {
     let cancelled = false
     fetch('/api/appointments')
@@ -137,7 +152,7 @@ export function BookingFlow({ dates }: { dates: string[] }) {
         <p className="kbd mt-10">Step 02 · Slot</p>
 
         <div className="mt-4 -mx-1 flex snap-x gap-2 overflow-x-auto px-1 pb-2">
-          {allDates.map((d) => {
+          {openDates.map((d) => {
             const active = date === d
             return (
               <button
@@ -160,7 +175,22 @@ export function BookingFlow({ dates }: { dates: string[] }) {
           })}
         </div>
 
-        {timesForDay.length === 0 ? (
+        {openDates.length === 0 ? (
+          <div className="mt-3 rounded-2xl border border-[rgba(58,27,20,0.15)] bg-[var(--color-paper-2)] p-5">
+            <p className="text-sm leading-relaxed text-[var(--color-ink-700)]">
+              The diary is full for {service.title} right now. Try another style, or message
+              the studio and we&rsquo;ll find you a seat.
+            </p>
+            <a
+              href={`https://wa.me/${brand.phone.replace(/\D/g, '')}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn btn-primary mt-4"
+            >
+              Ask on WhatsApp <ArrowUpRight size={16} />
+            </a>
+          </div>
+        ) : timesForDay.length === 0 ? (
           <p className="mt-3 text-sm text-[var(--color-ink-500)]">
             No start time on this day leaves us enough hours for {service.title}. Try another
             date, or pick a shorter style.
