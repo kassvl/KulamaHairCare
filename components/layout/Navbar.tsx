@@ -3,8 +3,8 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
-import { motion } from 'framer-motion'
-import { Menu, X } from 'lucide-react'
+import { AnimatePresence, motion } from 'framer-motion'
+import { ArrowUpRight, Instagram, Menu, Phone, X } from 'lucide-react'
 import { nav, brand } from '@/lib/data'
 import { cn } from '@/lib/utils'
 
@@ -33,6 +33,19 @@ export function Navbar() {
       window.removeEventListener('resize', onScroll)
     }
   }, [pathname])
+
+  // The menu takes over the screen; the page behind it must not scroll.
+  useEffect(() => {
+    if (!open) return
+    const previous = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => {
+      document.body.style.overflow = previous
+    }
+  }, [open])
+
+  // Route changes should never leave the overlay hanging around.
+  useEffect(() => setOpen(false), [pathname])
 
   return (
     <motion.header
@@ -94,27 +107,93 @@ export function Navbar() {
           </div>
         </nav>
 
-        {/* Mobile menu */}
-        {open && (
-          <motion.ul
-            initial={{ opacity: 0, y: -8 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mt-2 space-y-1 rounded-3xl border border-[rgba(58,27,20,0.12)] bg-[var(--color-paper)] p-3 lg:hidden"
-          >
-            {nav.map((item) => (
-              <li key={item.href}>
-                <Link
-                  href={item.href}
-                  onClick={() => setOpen(false)}
-                  className="block rounded-2xl px-4 py-3 text-sm font-medium text-[var(--color-ink-900)] hover:bg-[rgba(58,27,20,0.06)]"
-                >
-                  {item.label}
-                </Link>
-              </li>
-            ))}
-          </motion.ul>
-        )}
       </div>
+
+      {/* Full-screen menu */}
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+            className="fixed inset-0 z-50 flex flex-col bg-[var(--color-brand-deep)] lg:hidden"
+          >
+            <div className="flex items-center justify-between px-6 pt-6">
+              <span className="font-display text-2xl italic font-medium text-[var(--color-paper)]">
+                {brand.name}.
+              </span>
+              <button
+                onClick={() => setOpen(false)}
+                aria-label="Close menu"
+                className="grid h-11 w-11 place-items-center rounded-full border border-[rgba(244,236,226,0.25)] text-[var(--color-paper)]"
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            <nav className="flex flex-1 flex-col justify-center px-6">
+              <ul>
+                {nav.map((item, i) => (
+                  <motion.li
+                    key={item.href}
+                    initial={{ opacity: 0, y: 22 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{
+                      duration: 0.5,
+                      delay: 0.06 + i * 0.055,
+                      ease: [0.22, 1, 0.36, 1],
+                    }}
+                    className="border-b border-[rgba(244,236,226,0.12)]"
+                  >
+                    <Link
+                      href={item.href}
+                      onClick={() => setOpen(false)}
+                      className="flex items-baseline justify-between py-4 font-display text-4xl italic font-medium text-[var(--color-paper)]"
+                    >
+                      {item.label}
+                      <span className="text-xs not-italic tracking-[0.3em] text-[var(--color-brand-gold)]">
+                        {String(i + 1).padStart(2, '0')}
+                      </span>
+                    </Link>
+                  </motion.li>
+                ))}
+              </ul>
+            </nav>
+
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.45, duration: 0.4 }}
+              className="px-6 pb-10"
+            >
+              <Link
+                href="/rezervasyon"
+                onClick={() => setOpen(false)}
+                className="flex w-full items-center justify-center gap-2 rounded-full bg-[var(--color-paper)] px-6 py-4 text-sm font-semibold text-[var(--color-ink-900)]"
+              >
+                Book Now <ArrowUpRight size={16} />
+              </Link>
+              <div className="mt-5 flex items-center justify-between text-sm text-[rgba(244,236,226,0.75)]">
+                <a
+                  href={`tel:${brand.phone.replace(/\s+/g, '')}`}
+                  className="inline-flex items-center gap-2"
+                >
+                  <Phone size={14} /> {brand.phone}
+                </a>
+                <a
+                  href={brand.instagram}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2"
+                >
+                  <Instagram size={14} /> {brand.instagramHandle}
+                </a>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.header>
   )
 }

@@ -53,7 +53,7 @@ export function SplitHero() {
   return (
     <section
       ref={track}
-      className="relative isolate md:h-[150svh]"
+      className="relative isolate hidden md:block md:h-[150svh]"
       aria-label="Book a seat at KULAMA"
     >
       <div className="flex flex-col justify-center overflow-hidden py-24 md:sticky md:top-0 md:h-[100svh] md:py-0 md:pt-32">
@@ -141,7 +141,7 @@ export function SplitHero() {
   )
 }
 
-function BookingCard() {
+export function BookingCard() {
   return (
     <div className="card relative overflow-hidden p-7 md:p-8">
       <div className="flex items-center justify-between">

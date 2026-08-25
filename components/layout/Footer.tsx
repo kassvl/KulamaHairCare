@@ -5,7 +5,7 @@ import { brand, nav } from '@/lib/data'
 export function Footer() {
   return (
     <footer className="relative mt-24 bg-[var(--color-brand-deep)] text-[var(--color-paper)]">
-      <div className="mx-auto max-w-[1400px] px-6 py-20">
+      <div className="mx-auto max-w-[1400px] px-6 pb-32 pt-20 lg:pb-20">
         <div className="grid gap-12 md:grid-cols-12">
           <div className="md:col-span-5">
             <p className="font-display text-4xl italic md:text-5xl">{brand.name}.</p>

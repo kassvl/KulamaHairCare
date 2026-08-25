@@ -1,6 +1,7 @@
 'use client'
 
 import { usePathname } from 'next/navigation'
+import { MobileBookingBar } from '@/components/layout/MobileBookingBar'
 
 /**
  * Wraps the page in the public site's furniture — nav, footer, centre seam and
@@ -30,6 +31,7 @@ export function SiteChrome({
       {navbar}
       <main className="relative">{children}</main>
       {footer}
+      <MobileBookingBar />
     </>
   )
 }

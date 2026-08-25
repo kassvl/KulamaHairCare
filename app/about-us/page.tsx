@@ -45,8 +45,8 @@ export default function AboutPage() {
         </div>
 
         <ParallaxPlate
-          src="/img/goddess-braids.jpg"
-          alt="Goddess braids finished at the KULAMA studio"
+          src="/img/knotless-braids.jpg"
+          alt="Knotless braids finished at the KULAMA studio"
           className="mt-16 h-[62svh] md:mt-20 md:h-[84svh]"
         />
       </Section>
