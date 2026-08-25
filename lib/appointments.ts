@@ -62,6 +62,18 @@ export const OPENING_HOURS: ({ open: string; close: string } | null)[] = [
 /** Requests open this many days ahead, starting tomorrow. */
 export const BOOKING_WINDOW_DAYS = 45
 
+/**
+ * The widest window the studio can ever open a slot in — the palette the
+ * availability editor paints from, not the hours it actually keeps.
+ */
+export const DAY_START = '08:00'
+export const DAY_END = '21:00'
+
+/** A slot the studio has deliberately closed, or opened outside its hours. */
+export type SlotState = 'blocked' | 'open'
+/** `{ '2026-08-27': { '09:00': 'blocked' } }` */
+export type Overrides = Record<string, Record<string, SlotState>>
+
 const toMinutes = (hhmm: string) => {
   const [h, m] = hhmm.split(':').map(Number)
   return (h ?? 0) * 60 + (m ?? 0)
@@ -94,27 +106,65 @@ export function dayOf(date: string) {
  * Start times bookable on `date` for `serviceSlug`: every half hour from opening
  * until the last slot that still finishes before closing.
  */
-export function slotsFor(date: string, serviceSlug: string): string[] {
+export function slotsFor(
+  date: string,
+  serviceSlug: string,
+  overrides?: Overrides,
+): string[] {
   const hours = OPENING_HOURS[dayOf(date)]
-  if (!hours) return []
-
-  const lastStart = toMinutes(hours.close) - serviceMinutes(serviceSlug)
-  const firstStart = toMinutes(hours.open)
-  if (lastStart < firstStart) return []
+  const day = overrides?.[date] ?? {}
 
   const out: string[] = []
-  for (let t = firstStart; t <= lastStart; t += 30) out.push(toHHMM(t))
+  if (hours) {
+    const lastStart = toMinutes(hours.close) - serviceMinutes(serviceSlug)
+    const firstStart = toMinutes(hours.open)
+    for (let t = firstStart; t <= lastStart; t += 30) out.push(toHHMM(t))
+  }
+
+  // A slot opened by hand stands whatever the regular hours say — the studio
+  // knows when it is willing to stay late.
+  for (const [time, state] of Object.entries(day)) {
+    if (state === 'open' && !out.includes(time)) out.push(time)
+  }
+
+  return out.filter((t) => day[t] !== 'blocked').sort()
+}
+
+/** Every half hour the availability editor can paint, open or not. */
+export function everySlot(): string[] {
+  const out: string[] = []
+  for (let t = toMinutes(DAY_START); t <= toMinutes(DAY_END); t += 30) out.push(toHHMM(t))
   return out
 }
 
+/** True when the regular hours cover this slot (ignoring overrides). */
+export function withinHours(date: string, time: string) {
+  const hours = OPENING_HOURS[dayOf(date)]
+  if (!hours) return false
+  const t = toMinutes(time)
+  return t >= toMinutes(hours.open) && t <= toMinutes(hours.close)
+}
+
 /** The bookable date range: tomorrow through `BOOKING_WINDOW_DAYS` out. */
-export function bookableDates(today = new Date()): string[] {
+export function bookableDates(today = new Date(), overrides?: Overrides): string[] {
   const out: string[] = []
   for (let i = 1; i <= BOOKING_WINDOW_DAYS; i++) {
     const d = new Date(today)
     d.setDate(d.getDate() + i)
     const iso = toISODate(d)
-    if (isOpenOn(iso)) out.push(iso)
+    const opened = Object.values(overrides?.[iso] ?? {}).includes('open')
+    if (isOpenOn(iso) || opened) out.push(iso)
+  }
+  return out
+}
+
+/** Every day in the window, open or not — what the availability editor lists. */
+export function calendarDates(today = new Date()): string[] {
+  const out: string[] = []
+  for (let i = 0; i <= BOOKING_WINDOW_DAYS; i++) {
+    const d = new Date(today)
+    d.setDate(d.getDate() + i)
+    out.push(toISODate(d))
   }
   return out
 }
@@ -151,15 +201,19 @@ export interface BookingInput {
  * Validates a booking request. Returns field-keyed messages so the form can
  * show them inline; an empty object means the request is good to store.
  */
-export function validateBooking(input: Partial<BookingInput>) {
+export function validateBooking(input: Partial<BookingInput>, overrides?: Overrides) {
   const errors: Partial<Record<keyof BookingInput, string>> = {}
 
   const service = input.serviceSlug ? serviceBySlug(input.serviceSlug) : null
   if (!service) errors.serviceSlug = 'Pick one of our styles.'
 
+  const openedThatDay = input.date
+    ? Object.values(overrides?.[input.date] ?? {}).includes('open')
+    : false
+
   if (!input.date || !/^\d{4}-\d{2}-\d{2}$/.test(input.date)) {
     errors.date = 'Pick a date.'
-  } else if (!isOpenOn(input.date)) {
+  } else if (!isOpenOn(input.date) && !openedThatDay) {
     errors.date = 'The studio is closed that day.'
   } else if (input.date < toISODate(new Date())) {
     errors.date = 'That date has already passed.'
@@ -171,7 +225,7 @@ export function validateBooking(input: Partial<BookingInput>) {
     service &&
     input.date &&
     !errors.date &&
-    !slotsFor(input.date, service.slug).includes(input.time)
+    !slotsFor(input.date, service.slug, overrides).includes(input.time)
   ) {
     errors.time = 'That time is outside our hours for this style.'
   }

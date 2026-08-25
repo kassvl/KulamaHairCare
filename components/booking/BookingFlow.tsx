@@ -5,7 +5,13 @@ import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { AlertCircle, ArrowUpRight, CalendarDays, Clock4, Loader2, MapPin } from 'lucide-react'
 import { services, brand } from '@/lib/content'
-import { formatSlotDate, slotsFor, type BookingInput } from '@/lib/appointments'
+import {
+  formatSlotDate,
+  slotsFor,
+  toISODate,
+  type BookingInput,
+  type Overrides,
+} from '@/lib/appointments'
 
 type FieldErrors = Partial<Record<keyof BookingInput, string>>
 
@@ -17,19 +23,35 @@ export function BookingFlow({ dates }: { dates: string[] }) {
   const [time, setTime] = useState<string | null>(null)
   const [form, setForm] = useState({ name: '', email: '', phone: '', note: '', company: '' })
   const [taken, setTaken] = useState<Record<string, string[]>>({})
+  const [overrides, setOverrides] = useState<Overrides>({})
   const [errors, setErrors] = useState<FieldErrors>({})
   const [failure, setFailure] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
 
   const service = services.find((s) => s.slug === style)!
-  const timesForDay = useMemo(() => (date ? slotsFor(date, style) : []), [date, style])
+
+  // A day the studio opened by hand won't be in the server-rendered list.
+  const allDates = useMemo(() => {
+    const today = toISODate(new Date())
+    const opened = Object.entries(overrides)
+      .filter(([, slots]) => Object.values(slots).includes('open'))
+      .map(([d]) => d)
+    return [...new Set([...dates, ...opened])].filter((d) => d > today).sort()
+  }, [dates, overrides])
+
+  const timesForDay = useMemo(
+    () => (date ? slotsFor(date, style, overrides) : []),
+    [date, style, overrides],
+  )
 
   useEffect(() => {
     let cancelled = false
     fetch('/api/appointments')
-      .then((r) => (r.ok ? r.json() : { taken: {} }))
+      .then((r) => (r.ok ? r.json() : { taken: {}, overrides: {} }))
       .then((d) => {
-        if (!cancelled) setTaken(d.taken ?? {})
+        if (cancelled) return
+        setTaken(d.taken ?? {})
+        setOverrides(d.overrides ?? {})
       })
       .catch(() => {})
     return () => {
@@ -115,7 +137,7 @@ export function BookingFlow({ dates }: { dates: string[] }) {
         <p className="kbd mt-10">Step 02 · Slot</p>
 
         <div className="mt-4 -mx-1 flex snap-x gap-2 overflow-x-auto px-1 pb-2">
-          {dates.map((d) => {
+          {allDates.map((d) => {
             const active = date === d
             return (
               <button

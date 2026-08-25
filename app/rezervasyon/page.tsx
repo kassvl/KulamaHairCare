@@ -3,11 +3,20 @@ import { ArrowUpRight } from 'lucide-react'
 import { Section } from '@/components/ui/Section'
 import { BookingFlow } from '@/components/booking/BookingFlow'
 import { bookableDates } from '@/lib/appointments'
+import { listOverrides } from '@/lib/store'
 
 // Bookable dates roll forward with the calendar, so this page can't be static.
 export const dynamic = 'force-dynamic'
 
-export default function BookingPage() {
+export default async function BookingPage() {
+  // Days the studio opened by hand belong in the very first paint.
+  let overrides = {}
+  try {
+    overrides = await listOverrides()
+  } catch (err) {
+    console.error('[booking] overrides unavailable', err)
+  }
+
   return (
     <>
       <Section
@@ -20,7 +29,7 @@ export default function BookingPage() {
         description="Choose a style, pick a slot — we’ll confirm by email within 24 hours."
         className="pt-40 md:pt-44"
       >
-        <BookingFlow dates={bookableDates()} />
+        <BookingFlow dates={bookableDates(new Date(), overrides)} />
       </Section>
 
       <BackCTA />

@@ -1,12 +1,13 @@
 import { NextResponse } from 'next/server'
 import { validateBooking, type BookingInput } from '@/lib/appointments'
-import { createAppointment, takenSlots } from '@/lib/store'
+import { createAppointment, listOverrides, takenSlots } from '@/lib/store'
 
 export const dynamic = 'force-dynamic'
 
-/** Slots already spoken for, so the form can grey them out. */
+/** What the booking form needs to know before it can offer a slot. */
 export async function GET() {
-  return NextResponse.json({ taken: await takenSlots() })
+  const [taken, overrides] = await Promise.all([takenSlots(), listOverrides()])
+  return NextResponse.json({ taken, overrides })
 }
 
 /** Creates a booking *request* — it stays `pending` until the studio answers. */
@@ -23,7 +24,18 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Rejected.' }, { status: 400 })
   }
 
-  const errors = validateBooking(body)
+  let overrides
+  try {
+    overrides = await listOverrides()
+  } catch (err) {
+    console.error('[appointments] overrides unavailable', err)
+    return NextResponse.json(
+      { error: 'We could not reach the diary. Please try again in a moment.' },
+      { status: 503 },
+    )
+  }
+
+  const errors = validateBooking(body, overrides)
   if (Object.keys(errors).length > 0) {
     return NextResponse.json({ errors }, { status: 422 })
   }

@@ -2,7 +2,13 @@ import 'server-only'
 import { randomUUID, randomBytes } from 'node:crypto'
 import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import path from 'node:path'
-import type { Appointment, AppointmentStatus, BookingInput } from '@/lib/appointments'
+import type {
+  Appointment,
+  AppointmentStatus,
+  BookingInput,
+  Overrides,
+  SlotState,
+} from '@/lib/appointments'
 import { serviceBySlug } from '@/lib/appointments'
 
 /**
@@ -38,6 +44,9 @@ interface Driver {
   byId(id: string): Promise<Appointment | null>
   insert(row: Appointment): Promise<Appointment>
   patch(id: string, patch: AppointmentPatch): Promise<Appointment | null>
+  /** Slots the studio closed, or opened outside its regular hours. */
+  overrides(): Promise<Overrides>
+  setOverride(date: string, time: string, state: SlotState | null): Promise<void>
 }
 
 /* ─────────────────────────── Postgres driver ─────────────────────────── */
@@ -152,6 +161,31 @@ const postgresDriver: Driver = {
     `
     return rows[0] ? fromRow(rows[0] as Row) : null
   },
+  async overrides() {
+    const sql = await getSql()
+    const rows = await sql`select date, time, state from slot_overrides`
+    return foldOverrides(
+      rows.map((r) => [String(r.date), String(r.time), String(r.state) as SlotState]),
+    )
+  },
+  async setOverride(date, time, state) {
+    const sql = await getSql()
+    if (state === null) {
+      await sql`delete from slot_overrides where date = \${date} and time = \${time}`
+      return
+    }
+    await sql`
+      insert into slot_overrides (date, time, state) values (\${date}, \${time}, \${state})
+      on conflict (date, time) do update set state = excluded.state
+    `
+  },
+}
+
+/** `[date, time, state][]` → `{ date: { time: state } }` */
+function foldOverrides(entries: [string, string, SlotState][]): Overrides {
+  const out: Overrides = {}
+  for (const [date, time, state] of entries) (out[date] ??= {})[time] = state
+  return out
 }
 
 /* ───────────────────────────── Redis driver ──────────────────────────── */
@@ -160,6 +194,7 @@ const KEY = {
   row: (id: string) => `kulama:appt:${id}`,
   token: (token: string) => `kulama:token:${token}`,
   index: 'kulama:appts',
+  overrides: 'kulama:overrides',
 }
 
 let redisClient: import('@upstash/redis').Redis | null = null
@@ -232,11 +267,28 @@ const redisDriver: Driver = {
     await redis.set(KEY.row(id), JSON.stringify(next))
     return next
   },
+  async overrides() {
+    const redis = await getRedis()
+    const raw = (await redis.hgetall<Record<string, string>>(KEY.overrides)) ?? {}
+    return foldOverrides(
+      Object.entries(raw).map(([field, state]) => {
+        const [date, time] = field.split('|')
+        return [date!, time!, state as SlotState]
+      }),
+    )
+  },
+  async setOverride(date, time, state) {
+    const redis = await getRedis()
+    const field = `\${date}|\${time}`
+    if (state === null) await redis.hdel(KEY.overrides, field)
+    else await redis.hset(KEY.overrides, { [field]: state })
+  },
 }
 
 /* ───────────────────────────── File driver ───────────────────────────── */
 
 const FILE = path.join(process.cwd(), '.data', 'appointments.json')
+const OVERRIDES_FILE = path.join(process.cwd(), '.data', 'overrides.json')
 
 async function readAll(): Promise<Appointment[]> {
   try {
@@ -286,6 +338,24 @@ const fileDriver: Driver = {
     await writeAll(rows)
     return next
   },
+  async overrides() {
+    try {
+      return JSON.parse(await readFile(OVERRIDES_FILE, 'utf8')) as Overrides
+    } catch {
+      return {}
+    }
+  },
+  async setOverride(date, time, state) {
+    const all = await fileDriver.overrides()
+    if (state === null) {
+      delete all[date]?.[time]
+      if (all[date] && Object.keys(all[date]).length === 0) delete all[date]
+    } else {
+      ;(all[date] ??= {})[time] = state
+    }
+    await mkdir(path.dirname(OVERRIDES_FILE), { recursive: true })
+    await writeFile(OVERRIDES_FILE, JSON.stringify(all, null, 2), 'utf8')
+  },
 }
 
 const driver: Driver =
@@ -331,6 +401,14 @@ export function createAppointment(input: BookingInput) {
     updatedAt: now,
   }
   return driver.insert(row)
+}
+
+export function listOverrides() {
+  return driver.overrides()
+}
+
+export function setSlotOverride(date: string, time: string, state: SlotState | null) {
+  return driver.setOverride(date, time, state)
 }
 
 /** Slots already taken, so the booking form can grey them out. */

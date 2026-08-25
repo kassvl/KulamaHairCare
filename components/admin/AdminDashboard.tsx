@@ -24,6 +24,7 @@ import {
   type AppointmentStatus,
 } from '@/lib/appointments'
 import type { StoreKind } from '@/lib/store'
+import { Availability } from '@/components/admin/Availability'
 
 type Filter = 'inbox' | 'confirmed' | 'waiting' | 'closed' | 'all'
 
@@ -43,11 +44,12 @@ const STATUS_STYLE: Record<AppointmentStatus, string> = {
   cancelled: 'bg-[rgba(58,27,20,0.08)] text-[var(--color-ink-500)]',
 }
 
-export function AdminDashboard({ dates }: { dates: string[] }) {
+export function AdminDashboard({ dates, calendar }: { dates: string[]; calendar: string[] }) {
   const router = useRouter()
   const [appointments, setAppointments] = useState<Appointment[]>([])
   const [storeKind, setStoreKind] = useState<StoreKind | null>(null)
   const [filter, setFilter] = useState<Filter>('inbox')
+  const [view, setView] = useState<'requests' | 'availability'>('requests')
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
@@ -124,7 +126,28 @@ export function AdminDashboard({ dates }: { dates: string[] }) {
         </div>
       )}
 
-      <nav className="mt-8 flex flex-wrap gap-2">
+      <div className="mt-8 inline-flex rounded-full border border-[rgba(58,27,20,0.15)] p-1">
+        {(['requests', 'availability'] as const).map((v) => (
+          <button
+            key={v}
+            onClick={() => setView(v)}
+            className={
+              'rounded-full px-5 py-2 text-sm font-semibold capitalize transition-colors ' +
+              (view === v
+                ? 'bg-[var(--color-ink-900)] text-[var(--color-paper)]'
+                : 'text-[var(--color-ink-700)] hover:text-[var(--color-ink-900)]')
+            }
+          >
+            {v === 'requests' ? 'Requests' : 'Opening times'}
+          </button>
+        ))}
+      </div>
+
+      {view === 'availability' && <Availability dates={calendar} />}
+
+      {view === 'requests' && (
+      <>
+      <nav className="mt-6 flex flex-wrap gap-2">
         {FILTERS.map((f) => {
           const active = filter === f.key
           return (
@@ -167,6 +190,8 @@ export function AdminDashboard({ dates }: { dates: string[] }) {
             <RequestCard key={a.id} appointment={a} dates={dates} onDone={load} />
           ))}
         </ul>
+      )}
+      </>
       )}
     </div>
   )
