@@ -103,7 +103,7 @@ export function BookingFlow({ dates }: { dates: string[] }) {
 
   return (
     <div className="grid gap-10 lg:grid-cols-12">
-      <div className="lg:col-span-7">
+      <div className="min-w-0 lg:col-span-7">
         {/* ── Step 01 ─────────────────────────────────────────────── */}
         <p className="kbd">Step 01 · Style</p>
         <ul className="mt-4 grid gap-3 sm:grid-cols-2">
@@ -267,7 +267,7 @@ export function BookingFlow({ dates }: { dates: string[] }) {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.6 }}
-        className="lg:col-span-5"
+        className="min-w-0 lg:col-span-5"
       >
         <div className="sticky top-28 card p-7">
           <p className="kbd">Summary</p>

@@ -42,6 +42,13 @@ html, body, #__next {
   color: var(--color-ink-900);
 }
 
+/* Nothing may widen the page sideways — a phone answers that by zooming out.
+   `clip` rather than `hidden` so sticky positioning keeps working. */
+html, body {
+  overflow-x: clip;
+  max-width: 100%;
+}
+
 html {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
