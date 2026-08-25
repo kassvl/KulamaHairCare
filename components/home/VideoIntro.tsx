@@ -116,7 +116,7 @@ export function VideoIntro() {
     if (handedOff.current) return
     handedOff.current = true
     setCueVisible(false)
-    animate(stage, 0.9, { duration: 1.5, ease: [0.22, 1, 0.36, 1] })
+    animate(stage, 0.9, { duration: 1.2, ease: [0.22, 1, 0.36, 1] })
     window.setTimeout(() => {
       // Only if they haven't already started exploring on their own.
       if (window.scrollY < 40) {
@@ -124,7 +124,7 @@ export function VideoIntro() {
           .getElementById('intro')
           ?.nextElementSibling?.scrollIntoView({ behavior: 'smooth', block: 'start' })
       }
-    }, 2600)
+    }, 1900)
   }, [stage])
 
   // No scrub, no playback — hold the closing frame with the type resolved.
@@ -208,6 +208,17 @@ export function VideoIntro() {
             <span className="font-script not-italic text-[var(--color-brand-clay)]">braiding</span>.
           </motion.p>
         </div>
+
+        {/* An escape hatch while the film runs — nobody should feel held */}
+        {mode === 'play' && !handedOff.current && (
+          <button
+            type="button"
+            onClick={finish}
+            className="absolute right-5 top-5 z-10 rounded-full bg-[rgba(20,10,6,0.45)] px-4 py-2 text-[0.7rem] font-semibold uppercase tracking-[0.2em] text-[rgba(244,236,226,0.95)] backdrop-blur-sm md:hidden"
+          >
+            Skip
+          </button>
+        )}
 
         {/* Scroll cue */}
         <motion.div

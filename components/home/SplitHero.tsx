@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { motion, useReducedMotion, useScroll, useSpring, useTransform } from 'framer-motion'
 import { ArrowUpRight, Clock4, MapPin, Sparkles } from 'lucide-react'
@@ -14,6 +14,20 @@ import { brand } from '@/lib/data'
 export function SplitHero() {
   const track = useRef<HTMLDivElement>(null)
   const reduced = useReducedMotion()
+  const [isPhone, setIsPhone] = useState(false)
+
+  // On a phone this section lays out normally: no pinned stage, no veil. The
+  // pinned version only has ~250px of travel there, which drained the content
+  // to blank paper for the rest of the scroll.
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 767px)')
+    const sync = () => setIsPhone(mq.matches)
+    sync()
+    mq.addEventListener('change', sync)
+    return () => mq.removeEventListener('change', sync)
+  }, [])
+
+  const flat = isPhone || reduced
 
   const { scrollYProgress } = useScroll({
     target: track,
@@ -39,15 +53,15 @@ export function SplitHero() {
   return (
     <section
       ref={track}
-      className="relative isolate h-[130svh] md:h-[150svh]"
+      className="relative isolate md:h-[150svh]"
       aria-label="Book a seat at KULAMA"
     >
-      <div className="sticky top-0 flex h-[100svh] flex-col justify-center overflow-hidden pt-28 md:pt-32">
+      <div className="flex flex-col justify-center overflow-hidden py-24 md:sticky md:top-0 md:h-[100svh] md:py-0 md:pt-32">
         {/* Depth 0 — oversized wordmark, the slowest thing on screen */}
         <motion.div
           aria-hidden
-          style={reduced ? undefined : { y: watermarkY, opacity: watermarkOpacity }}
-          className="pointer-events-none absolute inset-x-0 top-1/2 -translate-y-1/2 select-none text-center"
+          style={flat ? undefined : { y: watermarkY, opacity: watermarkOpacity }}
+          className="pointer-events-none absolute inset-x-0 top-1/2 hidden -translate-y-1/2 select-none text-center md:block"
         >
           <span className="font-display text-[26vw] italic font-medium leading-none tracking-tight text-[rgba(58,27,20,0.055)]">
             {brand.name}
@@ -63,7 +77,7 @@ export function SplitHero() {
             transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
             className="lg:col-span-5"
           >
-            <motion.div style={reduced ? undefined : { y: textY, opacity: textOpacity }}>
+            <motion.div style={flat ? undefined : { y: textY, opacity: textOpacity }}>
               <p className="kbd">{brand.tagline}</p>
               <h2 className="mt-4 font-display text-5xl leading-[1.02] tracking-tight text-[var(--color-ink-900)] sm:text-6xl md:text-7xl">
                 <span className="italic">Personalised</span>
@@ -104,7 +118,7 @@ export function SplitHero() {
             transition={{ duration: 0.7, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
             className="lg:col-span-5"
           >
-            <motion.div style={reduced ? undefined : { y: cardY, opacity: cardOpacity }}>
+            <motion.div style={flat ? undefined : { y: cardY, opacity: cardOpacity }}>
               <BookingCard />
             </motion.div>
           </motion.aside>
@@ -113,7 +127,7 @@ export function SplitHero() {
         {/* Veil — closes the entrance so the next section arrives on clean paper */}
         <motion.div
           aria-hidden
-          style={reduced ? { opacity: 0 } : { opacity: veilOpacity }}
+          style={flat ? { opacity: 0 } : { opacity: veilOpacity }}
           className="pointer-events-none absolute inset-0 bg-[var(--color-paper)]"
         />
 
