@@ -84,6 +84,14 @@ async function getSql(): Promise<Sql> {
           updated_at    timestamptz not null default now()
         )
       `
+      await sql`
+        create table if not exists slot_overrides (
+          date  text not null,
+          time  text not null,
+          state text not null,
+          primary key (date, time)
+        )
+      `
       return sql
     })().catch((err) => {
       // Let the next call retry rather than caching a failed connection.
@@ -171,11 +179,11 @@ const postgresDriver: Driver = {
   async setOverride(date, time, state) {
     const sql = await getSql()
     if (state === null) {
-      await sql`delete from slot_overrides where date = \${date} and time = \${time}`
+      await sql`delete from slot_overrides where date = ${date} and time = ${time}`
       return
     }
     await sql`
-      insert into slot_overrides (date, time, state) values (\${date}, \${time}, \${state})
+      insert into slot_overrides (date, time, state) values (${date}, ${time}, ${state})
       on conflict (date, time) do update set state = excluded.state
     `
   },
@@ -279,7 +287,7 @@ const redisDriver: Driver = {
   },
   async setOverride(date, time, state) {
     const redis = await getRedis()
-    const field = `\${date}|\${time}`
+    const field = `${date}|${time}`
     if (state === null) await redis.hdel(KEY.overrides, field)
     else await redis.hset(KEY.overrides, { [field]: state })
   },

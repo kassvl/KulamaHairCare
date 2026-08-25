@@ -6,8 +6,16 @@ export const dynamic = 'force-dynamic'
 
 /** What the booking form needs to know before it can offer a slot. */
 export async function GET() {
-  const [taken, overrides] = await Promise.all([takenSlots(), listOverrides()])
-  return NextResponse.json({ taken, overrides })
+  try {
+    const [taken, overrides] = await Promise.all([takenSlots(), listOverrides()])
+    return NextResponse.json({ taken, overrides })
+  } catch (err) {
+    console.error('[appointments] diary unavailable', err)
+    return NextResponse.json(
+      { taken: {}, overrides: {}, error: 'diary-unavailable' },
+      { status: 503 },
+    )
+  }
 }
 
 /** Creates a booking *request* — it stays `pending` until the studio answers. */
