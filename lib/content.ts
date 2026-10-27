@@ -7,8 +7,12 @@ import { brand } from '@/lib/data'
 export const services = [
   {
     slug: 'loc-maintenance',
+    film: '/video/svc-loc-maintenance.mp4',
+    poster: '/video/svc-loc-maintenance.jpg',
     image: '/img/dreadlock-retwist.jpg',
     title: 'Loc Maintenance',
+    /** How the service is named on the page; `title` is what bookings store. */
+    label: 'Loc maintenance',
     duration: '2–4 h',
     hours: [2, 4],
     from: '170 zł',
@@ -17,36 +21,57 @@ export const services = [
   },
   {
     slug: 'starter-locs',
+    film: '/video/svc-starter-locs.mp4',
+    poster: '/video/svc-starter-locs.jpg',
     image: '/img/comb-twist.jpg',
     title: 'Starter Locs',
+    label: 'Starter locs',
     duration: '3–6 h',
     hours: [3, 6],
-    from: '180 zł',
+    from: '220 zł',
     description:
       'Comb coil with gel, twist starter locs, and instant locs with or without extensions.',
   },
   {
     slug: 'braids-women',
+    film: '/video/svc-braids-women.mp4',
+    poster: '/video/svc-braids-women.jpg',
     image: '/img/goddess-braids.jpg',
     title: 'Braids · Women',
+    label: 'Women’s braids',
     duration: '5–7 h',
     hours: [5, 7],
-    from: '320 zł',
+    from: '350 zł',
     description:
       'Boho braids, Fulani bohemian, goddess braids, and cornrows with extensions.',
   },
   {
     slug: 'mens-cornrows',
+    film: '/video/svc-mens-cornrows.mp4',
+    poster: '/video/svc-mens-cornrows.jpg',
     image: '/img/stitch-braids.jpg',
     title: 'Men’s Cornrows',
+    label: 'Men’s cornrows',
     duration: '2–3 h',
     hours: [2, 3],
-    from: '160 zł',
+    from: '180 zł',
     description: 'Basic cornrows, stitch, design cornrows, and cornrows with twists.',
   },
 ] as const
 
-/** The studio's published price list, verbatim. */
+/**
+ * The entrance strip: three upright studio clips. A phone shows the first one.
+ */
+export const heroFilms = {
+  strip: [
+    { src: '/video/hero-twists.mp4', poster: '/video/hero-twists.jpg' },
+    { src: '/video/hero-retwist.mp4', poster: '/video/hero-retwist.jpg' },
+    { src: '/video/hero-braids.mp4', poster: '/video/hero-braids.jpg' },
+  ],
+  mobile: { src: '/video/hero-twists.mp4', poster: '/video/hero-twists.jpg' },
+} as const
+
+/** The studio's published price list. */
 export const priceList = [
   {
     group: 'Loc Maintenance',
@@ -62,13 +87,14 @@ export const priceList = [
         ],
       },
       {
-        name: 'Interlock Hook Maintenance',
+        name: 'Interlock Maintenance',
+        meta: 'hook',
+        tiers: [['', 'from 220 zł']],
+      },
+      {
+        name: 'Micro Locs Retwist',
         meta: null,
-        tiers: [
-          ['Skin Fade', '200 zł'],
-          ['Taper Fade', '210 zł'],
-          ['+ Style', '230 zł'],
-        ],
+        tiers: [['', '350 zł']],
       },
       {
         name: 'Needle Crochet Maintenance',
@@ -95,29 +121,21 @@ export const priceList = [
     meta: null,
     items: [
       {
-        name: 'With Gel',
+        name: 'Gel Starter Locs',
         meta: 'comb coil',
-        tiers: [
-          ['Skin Fade', '200 zł'],
-          ['Taper Fade', '210 zł'],
-          ['+ Simple Style', '240 zł'],
-        ],
+        tiers: [['', 'from 230 zł']],
       },
       {
         name: 'Twist Starter Locs',
         meta: null,
-        tiers: [
-          ['Skin Fade', '180 zł'],
-          ['Taper Fade', '195 zł'],
-          ['+ Style', '220 zł'],
-        ],
+        tiers: [['', 'from 220 zł']],
       },
       {
         name: 'Instant Locs',
         meta: '5–6 hrs',
         tiers: [
-          ['Skin Fade', '230 zł'],
-          ['Taper Fade', '+ 45 zł per hr'],
+          ['', 'from 450 zł'],
+          ['Additional time', 'may cost extra'],
         ],
       },
       {
@@ -137,24 +155,18 @@ export const priceList = [
       {
         name: 'Boho Braids',
         meta: null,
-        tiers: [
-          ['Medium', 'from 380 zł'],
-          ['Waist length', '410 zł'],
-        ],
+        tiers: [['', 'from 420 zł']],
       },
       {
         name: 'Fulani Bohemian',
         meta: null,
-        tiers: [
-          ['Medium', 'from 390 zł'],
-          ['Waist length', '410 zł'],
-        ],
+        tiers: [['', 'from 430 zł']],
       },
       {
         name: 'Goddess Braids',
         meta: null,
         tiers: [
-          ['Medium', 'from 320 zł'],
+          ['Medium', 'from 350 zł'],
           ['Long', '380 zł'],
         ],
       },
@@ -173,15 +185,16 @@ export const priceList = [
     group: 'Men’s Cornrows',
     meta: null,
     items: [
-      { name: 'Basic Cornrows', meta: null, tiers: [['', '160 zł']] },
-      { name: 'Stitch', meta: 'base price', tiers: [['', '200 zł']] },
-      { name: 'Design Cornrows', meta: null, tiers: [['', '220 zł']] },
+      { name: 'Basic Cornrows', meta: null, tiers: [['', '180 zł']] },
+      { name: 'Stitch Cornrows', meta: null, tiers: [['', '220 zł']] },
+      { name: 'Design Cornrows', meta: null, tiers: [['', '240–260 zł']] },
       { name: 'Cornrows & Twists', meta: null, tiers: [['', '185 zł']] },
     ],
   },
 ] as const
 
 export const priceNotes = [
+  'Final price depends on the style and length you choose.',
   '+20 zł for added length.',
   'Hair extensions & curls are not provided.',
 ] as const

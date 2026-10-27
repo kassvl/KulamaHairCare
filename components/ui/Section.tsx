@@ -39,11 +39,11 @@ export function Section({
         >
           <header>
             {eyebrow && (
-              <p className={cn('kbd rule-in', align === 'center' && 'justify-center')}>
-                {eyebrow}
+              <p className="text-sm font-medium text-[var(--color-brand-bronze)]">
+                {eyebrow.charAt(0).toUpperCase() + eyebrow.slice(1)}
               </p>
             )}
-            <h2 className="mt-4 font-display text-4xl italic font-medium leading-[1.05] tracking-tight text-[var(--color-ink-900)] md:text-6xl">
+            <h2 className="mt-3 font-display text-[2.6rem] font-medium leading-[1.02] tracking-[-0.02em] text-[var(--color-ink-900)] md:text-[4.25rem]">
               {title}
             </h2>
             {description && (

@@ -1,7 +1,7 @@
 export const nav = [
   { label: 'Home', href: '/' },
-  { label: 'Book Now', href: '/rezervasyon' },
-  { label: 'Pricing', href: '/pricing' },
+  { label: 'Book an appointment', href: '/rezervasyon' },
+  { label: 'Prices', href: '/pricing' },
   { label: 'Gallery', href: '/galeri' },
   { label: 'Special Offers', href: '/special-offers' },
   { label: 'About', href: '/about-us' },

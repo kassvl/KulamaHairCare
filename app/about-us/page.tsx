@@ -10,9 +10,7 @@ export default function AboutPage() {
         title={
           <>
             A studio for{' '}
-            <span className="font-script not-italic pe-3 text-[var(--color-brand-clay)]">
-              braids
-            </span>{' '}
+            braids{' '}
             and the people who wear them.
           </>
         }

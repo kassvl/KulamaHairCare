@@ -11,7 +11,7 @@ export default function SpecialOffersPage() {
         eyebrow="special offers"
         title={
           <>
-            Small <span className="font-script not-italic text-[var(--color-brand-clay)]">extras</span>, big love.
+            Small extras, big love.
           </>
         }
         description="Three rotating offers we keep open. Use them once, share them with a friend, then come back for the next one."
