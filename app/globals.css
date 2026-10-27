@@ -6,30 +6,36 @@
    KULAMA design tokens — see /design.md (Braided Cathedral)
    ───────────────────────────────────────────────────────────── */
 @theme {
-  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
-  --font-display: var(--font-cormorant), "Cormorant Garamond", Georgia, serif;
-  --font-script: var(--font-caveat), "Caveat", cursive;
+  --font-sans: var(--font-hanken), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-bodoni), "Bodoni Moda", "Didot", Georgia, serif;
+  /* The script face is retired; anything still asking for it gets the Didone italic. */
+  --font-script: var(--font-bodoni), "Bodoni Moda", Georgia, serif;
 
-  --color-paper: #f4ece2;
-  --color-paper-2: #ead9c6;
-  --color-paper-3: #dec5ad;
+  /* Shea — the light ground. Straw-leaning rather than pink-cream. */
+  --color-paper: #f1e8d8;
+  --color-paper-2: #e6d8c1;
+  --color-paper-3: #d6c3a4;
 
-  --color-ink-900: #2a1810;
-  --color-ink-700: #5c3a28;
-  --color-ink-500: #8c6448;
-  --color-ink-300: #b89274;
+  /* Espresso — text on light, ground on dark. */
+  --color-ink-900: #23140d;
+  --color-ink-700: #5a4030;
+  --color-ink-500: #7d6350;
+  --color-ink-300: #a88e74;
 
-  --color-brand-amber: #c97b3f;
-  --color-brand-clay: #a24e2a;
-  --color-brand-gold: #d9a441;
-  --color-brand-deep: #3a1b14;
+  /* Brass for prices and rules on dark; bronze is its legible twin on light. */
+  --color-brand-gold: #c9a15a;
+  --color-brand-bronze: #87602a;
+  /* Oxblood replaces terracotta as the one warm accent. */
+  --color-brand-clay: #7a2c1d;
+  --color-brand-amber: #87602a;
+  --color-brand-deep: #1c100a;
 
   --shadow-soft:
-    0 24px 60px -28px rgba(58, 27, 20, 0.25),
-    0 4px 12px -4px rgba(58, 27, 20, 0.1);
+    0 24px 60px -28px rgba(35, 20, 13, 0.28),
+    0 4px 12px -4px rgba(35, 20, 13, 0.1);
   --shadow-deluxe:
-    0 40px 100px -32px rgba(58, 27, 20, 0.35),
-    0 6px 16px -4px rgba(58, 27, 20, 0.18);
+    0 40px 100px -32px rgba(35, 20, 13, 0.38),
+    0 6px 16px -4px rgba(35, 20, 13, 0.18);
 }
 
 :root {
@@ -74,7 +80,6 @@ html {
 /* Editorial number stat */
 .stat-number {
   font-family: var(--font-display);
-  font-style: italic;
   font-weight: 500;
   font-size: clamp(48px, 6vw, 72px);
   line-height: 1;
@@ -85,9 +90,9 @@ html {
 /* Section label — uppercase tracked */
 .kbd {
   font-family: var(--font-sans);
-  font-size: 0.72rem;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
   color: var(--color-ink-500);
 }
 
@@ -123,10 +128,10 @@ html {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.75rem 1.25rem;
-  border-radius: 999px;
+  padding: 0.85rem 1.4rem;
+  border-radius: 2px;
   font-weight: 600;
-  font-size: 0.9rem;
+  font-size: 0.92rem;
   transition: transform 0.3s ease, background-color 0.3s ease, color 0.3s ease;
 }
 .btn-primary {
@@ -144,6 +149,25 @@ html {
 }
 .btn-ghost:hover {
   background: rgba(58, 27, 20, 0.06);
+  transform: translateY(-2px);
+}
+
+/* Buttons for dark grounds: the hero and the booking band */
+.btn-light {
+  background: var(--color-paper);
+  color: var(--color-ink-900);
+}
+.btn-light:hover {
+  background: var(--color-brand-gold);
+  transform: translateY(-2px);
+}
+.btn-outline-light {
+  background: transparent;
+  color: var(--color-paper);
+  border: 1px solid rgba(241, 232, 216, 0.4);
+}
+.btn-outline-light:hover {
+  border-color: var(--color-paper);
   transform: translateY(-2px);
 }
 

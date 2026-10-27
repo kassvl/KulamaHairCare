@@ -1,23 +1,18 @@
-import { Inter, Cormorant_Garamond, Caveat } from 'next/font/google'
+import { Bodoni_Moda, Hanken_Grotesk } from 'next/font/google'
 
-export const inter = Inter({
-  subsets: ['latin'],
+/** Body and interface text. */
+export const hanken = Hanken_Grotesk({
+  subsets: ['latin', 'latin-ext'],
   weight: ['400', '500', '600', '700'],
-  variable: '--font-inter',
+  variable: '--font-hanken',
   display: 'swap',
 })
 
-export const cormorant = Cormorant_Garamond({
-  subsets: ['latin'],
-  weight: ['500', '600'],
+/** Display face: a fashion-editorial Didone, set large. */
+export const bodoni = Bodoni_Moda({
+  subsets: ['latin', 'latin-ext'],
+  weight: ['400', '500', '600'],
   style: ['normal', 'italic'],
-  variable: '--font-cormorant',
-  display: 'swap',
-})
-
-export const caveat = Caveat({
-  subsets: ['latin'],
-  weight: ['600'],
-  variable: '--font-caveat',
+  variable: '--font-bodoni',
   display: 'swap',
 })

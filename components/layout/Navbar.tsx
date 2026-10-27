@@ -4,26 +4,22 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { ArrowUpRight, Instagram, Menu, Phone, X } from 'lucide-react'
+import { Instagram, Menu, Phone, X } from 'lucide-react'
 import { nav, brand } from '@/lib/data'
 import { cn } from '@/lib/utils'
 
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false)
   const [open, setOpen] = useState(false)
-  // The film intro is full-bleed and dark; the bar would be unreadable over it.
-  const [behindIntro, setBehindIntro] = useState(false)
+  // Over the dark film entrance the bar turns light-on-dark.
+  const [onDark, setOnDark] = useState(false)
   const pathname = usePathname()
 
   useEffect(() => {
     const intro = document.getElementById('intro')
     const onScroll = () => {
       setScrolled(window.scrollY > 16)
-      setBehindIntro(
-        intro
-          ? window.scrollY < intro.offsetTop + intro.offsetHeight - window.innerHeight * 0.55
-          : false,
-      )
+      setOnDark(intro ? window.scrollY < intro.offsetTop + intro.offsetHeight - 72 : false)
     }
     onScroll()
     window.addEventListener('scroll', onScroll, { passive: true })
@@ -50,38 +46,34 @@ export function Navbar() {
   return (
     <motion.header
       initial={{ y: -24, opacity: 0 }}
-      animate={behindIntro ? { y: -96, opacity: 0 } : { y: 0, opacity: 1 }}
+      animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-      style={{ pointerEvents: behindIntro ? 'none' : 'auto' }}
       className={cn(
-        'fixed inset-x-0 top-0 z-40 transition-[padding] duration-300',
-        scrolled ? 'py-2' : 'py-4',
+        'fixed inset-x-0 top-0 z-40 border-b transition-colors duration-300',
+        onDark
+          ? 'border-transparent text-[var(--color-paper)]'
+          : scrolled
+            ? 'border-[rgba(35,20,13,0.12)] bg-[rgba(241,232,216,0.92)] text-[var(--color-ink-900)] backdrop-blur-md'
+            : 'border-transparent text-[var(--color-ink-900)]',
       )}
-      aria-hidden={behindIntro}
     >
-      <div className="mx-auto max-w-[1400px] px-6">
-        <nav
-          className={cn(
-            'flex items-center justify-between rounded-full border px-4 py-2.5 backdrop-blur-md transition-all duration-300',
-            scrolled
-              ? 'border-[rgba(58,27,20,0.15)] bg-[rgba(244,236,226,0.85)] shadow-[0_8px_24px_-8px_rgba(58,27,20,0.18)]'
-              : 'border-transparent bg-[rgba(244,236,226,0.45)]',
-          )}
-        >
+      <div className="mx-auto max-w-[1480px] px-5 md:px-8">
+        <nav className="flex h-16 items-center justify-between md:h-[4.5rem]">
           <Link
             href="/"
-            className="font-display text-2xl italic font-medium tracking-tight text-[var(--color-ink-900)]"
+            className="font-display text-[1.65rem] font-medium tracking-[-0.02em]"
             aria-label={brand.fullName}
           >
-            {brand.name}.
+            Kulama
           </Link>
 
-          <ul className="hidden items-center gap-1 lg:flex">
-            {nav.slice(1, 6).map((item) => (
+          <ul className="hidden items-center gap-7 lg:flex">
+            {nav.slice(2).map((item) => (
               <li key={item.href}>
                 <Link
                   href={item.href}
-                  className="rounded-full px-3.5 py-1.5 text-sm font-medium text-[var(--color-ink-700)] transition-colors hover:bg-[rgba(58,27,20,0.06)] hover:text-[var(--color-ink-900)]"
+                  aria-current={pathname === item.href ? 'page' : undefined}
+                  className="text-sm font-medium opacity-80 underline-offset-[6px] transition-opacity hover:opacity-100 aria-[current=page]:underline aria-[current=page]:opacity-100"
                 >
                   {item.label}
                 </Link>
@@ -92,13 +84,19 @@ export function Navbar() {
           <div className="flex items-center gap-2">
             <Link
               href="/rezervasyon"
-              className="btn btn-primary hidden sm:inline-flex"
+              className={cn(
+                'btn hidden !py-2.5 sm:inline-flex',
+                onDark ? 'btn-light' : 'btn-primary',
+              )}
             >
-              Book Now
+              Book an appointment
             </Link>
             <button
               onClick={() => setOpen(!open)}
-              className="grid h-10 w-10 place-items-center rounded-full border border-[rgba(58,27,20,0.15)] text-[var(--color-ink-900)] lg:hidden"
+              className={cn(
+                'grid h-10 w-10 place-items-center rounded-[2px] border lg:hidden',
+                onDark ? 'border-[rgba(241,232,216,0.4)]' : 'border-[rgba(35,20,13,0.2)]',
+              )}
               aria-label={open ? 'Close menu' : 'Open menu'}
               aria-expanded={open}
             >
@@ -120,13 +118,13 @@ export function Navbar() {
             className="fixed inset-0 z-50 flex flex-col bg-[var(--color-brand-deep)] lg:hidden"
           >
             <div className="flex items-center justify-between px-6 pt-6">
-              <span className="font-display text-2xl italic font-medium text-[var(--color-paper)]">
-                {brand.name}.
+              <span className="font-display text-[1.65rem] font-medium text-[var(--color-paper)]">
+                Kulama
               </span>
               <button
                 onClick={() => setOpen(false)}
                 aria-label="Close menu"
-                className="grid h-11 w-11 place-items-center rounded-full border border-[rgba(244,236,226,0.25)] text-[var(--color-paper)]"
+                className="grid h-11 w-11 place-items-center rounded-[2px] border border-[rgba(244,236,226,0.25)] text-[var(--color-paper)]"
               >
                 <X size={18} />
               </button>
@@ -149,12 +147,9 @@ export function Navbar() {
                     <Link
                       href={item.href}
                       onClick={() => setOpen(false)}
-                      className="flex items-baseline justify-between py-4 font-display text-4xl italic font-medium text-[var(--color-paper)]"
+                      className="block py-4 font-display text-4xl font-medium text-[var(--color-paper)]"
                     >
                       {item.label}
-                      <span className="text-xs not-italic tracking-[0.3em] text-[var(--color-brand-gold)]">
-                        {String(i + 1).padStart(2, '0')}
-                      </span>
                     </Link>
                   </motion.li>
                 ))}
@@ -170,9 +165,9 @@ export function Navbar() {
               <Link
                 href="/rezervasyon"
                 onClick={() => setOpen(false)}
-                className="flex w-full items-center justify-center gap-2 rounded-full bg-[var(--color-paper)] px-6 py-4 text-sm font-semibold text-[var(--color-ink-900)]"
+                className="btn btn-light w-full justify-center !py-4"
               >
-                Book Now <ArrowUpRight size={16} />
+                Book an appointment
               </Link>
               <div className="mt-5 flex items-center justify-between text-sm text-[rgba(244,236,226,0.75)]">
                 <a

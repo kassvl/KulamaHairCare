@@ -15,9 +15,7 @@ export default function GalleryPage() {
         title={
           <>
             The{' '}
-            <span className="font-script not-italic pe-3 text-[var(--color-brand-clay)]">
-              looks
-            </span>{' '}
+            looks{' '}
             we&rsquo;ve laid.
           </>
         }
@@ -38,7 +36,6 @@ export default function GalleryPage() {
               {/* Legibility scrim under the caption */}
               <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-[rgba(0,0,0,0.7)] to-transparent" />
               <div className="absolute inset-0 flex flex-col justify-end p-6">
-                <span className="index-numeral">{String(i + 1).padStart(2, '0')}</span>
                 <p className="font-script text-2xl text-[var(--color-brand-gold)]">{item.tag}</p>
                 <p className="font-display text-xl italic text-[var(--color-paper)]">
                   {item.caption}

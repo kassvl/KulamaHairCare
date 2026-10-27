@@ -1,66 +1,64 @@
 import Link from 'next/link'
-import { Instagram, Mail, MapPin, Phone } from 'lucide-react'
 import { brand, nav } from '@/lib/data'
 
 export function Footer() {
   return (
-    <footer className="relative mt-24 bg-[var(--color-brand-deep)] text-[var(--color-paper)]">
-      <div className="mx-auto max-w-[1400px] px-6 pb-32 pt-20 lg:pb-20">
-        <div className="grid gap-12 md:grid-cols-12">
-          <div className="md:col-span-5">
-            <p className="font-display text-4xl italic md:text-5xl">{brand.name}.</p>
-            <p className="mt-4 max-w-sm text-sm leading-relaxed text-[rgba(244,236,226,0.7)]">
-              Where traditional African braiding artistry meets modern Wrocław elegance.
-              Premium hair care, by appointment.
+    <footer className="relative bg-[var(--color-brand-deep)] text-[var(--color-paper)]">
+      <div className="mx-auto max-w-[1480px] px-5 pb-32 pt-16 md:px-8 lg:pb-14">
+        <div className="grid gap-12 border-t border-[rgba(201,161,90,0.3)] pt-12 md:grid-cols-12">
+          <div className="md:col-span-6">
+            <p className="font-display text-6xl font-medium leading-none tracking-[-0.03em] md:text-7xl">
+              Kulama
             </p>
-            <a
-              href={brand.instagram}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-6 inline-flex items-center gap-2 rounded-full border border-[rgba(244,236,226,0.25)] px-4 py-2 text-sm text-[var(--color-paper)] transition-colors hover:bg-[rgba(244,236,226,0.08)]"
-            >
-              <Instagram size={14} /> {brand.instagramHandle}
-            </a>
+            <p className="mt-4 max-w-[36ch] text-[rgba(241,232,216,0.7)]">
+              Hair care and braids by appointment, at {brand.address.replace(', Poland', '')}.
+            </p>
           </div>
 
-          <div className="md:col-span-3">
-            <p className="kbd text-[var(--color-brand-gold)]">Visit</p>
-            <ul className="mt-4 space-y-3 text-sm text-[rgba(244,236,226,0.85)]">
-              {nav.slice(1, 6).map((item) => (
+          <nav aria-label="Footer" className="md:col-span-3">
+            <ul className="space-y-2.5 text-[rgba(241,232,216,0.85)]">
+              {nav.slice(1).map((item) => (
                 <li key={item.href}>
-                  <Link href={item.href} className="hover:text-[var(--color-paper)]">
+                  <Link href={item.href} className="hover:text-[var(--color-paper)] hover:underline underline-offset-4">
                     {item.label}
                   </Link>
                 </li>
               ))}
             </ul>
-          </div>
+          </nav>
 
-          <div className="md:col-span-4">
-            <p className="kbd text-[var(--color-brand-gold)]">Contact</p>
-            <ul className="mt-4 space-y-3 text-sm text-[rgba(244,236,226,0.85)]">
-              <li className="flex items-start gap-2">
-                <MapPin size={14} className="mt-1 shrink-0" />
-                <span>{brand.address}</span>
-              </li>
-              <li>
-                <a href={`tel:${brand.phone.replace(/\s+/g, '')}`} className="inline-flex items-center gap-2 hover:text-[var(--color-paper)]">
-                  <Phone size={14} /> {brand.phone}
-                </a>
-              </li>
-              <li>
-                <a href={`mailto:${brand.email}`} className="inline-flex items-center gap-2 hover:text-[var(--color-paper)]">
-                  <Mail size={14} /> {brand.email}
-                </a>
-              </li>
-            </ul>
-          </div>
+          <ul className="space-y-2.5 text-[rgba(241,232,216,0.85)] md:col-span-3">
+            <li>
+              <a href={`tel:${brand.phone.replace(/\s+/g, '')}`} className="hover:text-[var(--color-paper)]">
+                {brand.phone}
+              </a>
+            </li>
+            <li>
+              <a
+                href={brand.instagram}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-[var(--color-paper)]"
+              >
+                Instagram {brand.instagramHandle}
+              </a>
+            </li>
+            <li>
+              <a
+                href={`https://wa.me/${brand.phone.replace(/\D/g, '')}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-[var(--color-paper)]"
+              >
+                WhatsApp
+              </a>
+            </li>
+          </ul>
         </div>
 
-        <div className="mt-16 flex flex-col items-start justify-between gap-3 border-t border-[rgba(244,236,226,0.12)] pt-6 text-xs text-[rgba(244,236,226,0.55)] md:flex-row md:items-center">
-          <p>© {new Date().getFullYear()} {brand.fullName}. All rights reserved.</p>
-          <p className="font-script text-base text-[var(--color-brand-gold)]">crafted with care · Wrocław</p>
-        </div>
+        <p className="mt-16 text-sm text-[rgba(241,232,216,0.5)]">
+          © {new Date().getFullYear()} Kulama Hair Care &amp; Braids, Wrocław
+        </p>
       </div>
     </footer>
   )

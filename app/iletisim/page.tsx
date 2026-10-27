@@ -10,7 +10,7 @@ export default function ContactPage() {
         eyebrow="contact"
         title={
           <>
-            Come say <span className="font-script not-italic text-[var(--color-brand-clay)]">hello</span>.
+            Come say hello.
           </>
         }
         description="We&rsquo;re happy with email, message, voice — whichever feels easiest to you."

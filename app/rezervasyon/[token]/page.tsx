@@ -77,7 +77,7 @@ export default async function BookingStatusPage({
       eyebrow="your request"
       title={
         <>
-          Your <span className="font-script not-italic text-[var(--color-brand-clay)]">seat</span>, so far.
+          Your seat, so far.
         </>
       }
       description="Everything about your appointment lives on this page — including any change we suggest."

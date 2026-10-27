@@ -23,7 +23,7 @@ export default async function BookingPage() {
         eyebrow="reservation"
         title={
           <>
-            Book your <span className="font-script not-italic text-[var(--color-brand-clay)]">seat</span>.
+            Book your seat.
           </>
         }
         description="Choose a style, pick a slot — we’ll confirm by email within 24 hours."

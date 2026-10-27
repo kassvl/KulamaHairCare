@@ -30,6 +30,12 @@ export function BookingFlow({ dates }: { dates: string[] }) {
 
   const service = services.find((s) => s.slug === style)!
 
+  // Arriving from a service on the home page (?service=<slug>) preselects it.
+  useEffect(() => {
+    const wanted = new URLSearchParams(window.location.search).get('service')
+    if (wanted && services.some((s) => s.slug === wanted)) setStyle(wanted)
+  }, [])
+
   // A day the studio opened by hand won't be in the server-rendered list.
   const allDates = useMemo(() => {
     const today = toISODate(new Date())

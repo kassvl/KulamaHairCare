@@ -1,115 +1,131 @@
-import Image from 'next/image'
+import type { Metadata } from 'next'
 import Link from 'next/link'
-import { ArrowUpRight, Info } from 'lucide-react'
-import { Section } from '@/components/ui/Section'
+import { PriceLine } from '@/components/ui/PriceLine'
 import { services, priceList, priceNotes } from '@/lib/content'
 
+export const metadata: Metadata = {
+  title: 'Prices | Kulama Hair Care',
+  description:
+    'Prices in złoty for loc maintenance, starter locs, women’s braids and men’s cornrows at Kulama, Wrocław.',
+}
+
+/**
+ * The price board. Dark ground, dotted leaders: the way a salon prints its
+ * prices on the wall, so it reads at a glance on a phone.
+ */
 export default function PricingPage() {
   return (
     <>
-      <Section
-        eyebrow="pricing"
-        title={
-          <>
-            Honest, hand-laid{' '}
-            <span className="font-script not-italic pe-3 text-[var(--color-brand-clay)]">
-              prices
-            </span>
-            .
-          </>
-        }
-        description="Starting prices below cover most of our requests. Final quote is confirmed at consultation — extras (length, density, embellishments) are itemised before we begin."
-        className="pt-40 md:pt-44"
-      >
-        {/* The four families, as a way in */}
-        <ul className="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
-          {services.map((s, i) => (
-            <li key={s.slug} className="tile group aspect-[4/5]">
-              <Image
-                src={s.image}
-                alt={s.title}
-                fill
-                sizes="(min-width: 1024px) 22vw, (min-width: 768px) 45vw, 90vw"
-                className="tile-media object-cover"
-                priority={i < 2}
-              />
-              <div className="absolute inset-x-0 bottom-0 h-3/5 bg-gradient-to-t from-[rgba(0,0,0,0.78)] to-transparent" />
-              <div className="absolute inset-0 flex flex-col justify-end p-5">
-                <span className="index-numeral">{String(i + 1).padStart(2, '0')}</span>
-                <h3 className="font-display text-2xl italic font-medium text-[var(--color-paper)]">
-                  {s.title}
-                </h3>
-                <p className="mt-1 flex items-baseline gap-3">
-                  <span className="font-script text-2xl text-[var(--color-brand-gold)]">
-                    from {s.from}
-                  </span>
-                  <span className="text-[0.68rem] uppercase tracking-[0.2em] text-[rgba(244,236,226,0.7)]">
-                    {s.duration}
-                  </span>
-                </p>
-              </div>
-            </li>
-          ))}
-        </ul>
-      </Section>
+      <section className="pb-14 pt-32 md:pb-20 md:pt-44">
+        <div className="mx-auto max-w-[1480px] px-5 md:px-8">
+          <h1 className="font-display text-[3.4rem] font-medium leading-[0.95] tracking-[-0.03em] md:text-[7rem]">
+            Prices
+          </h1>
+          <p className="mt-6 max-w-[52ch] text-lg leading-relaxed text-[var(--color-ink-700)]">
+            All prices are in złoty. The final price depends on the style and length you
+            choose.
+          </p>
 
-      {priceList.map((group) => (
-        <Section
-          key={group.group}
-          eyebrow={group.meta ?? 'price list'}
-          title={group.group}
-          className="py-16 md:py-20"
-        >
-          <ul className="grid gap-4 md:grid-cols-2">
-            {group.items.map((item) => (
-              <li key={item.name} className="card p-6">
-                <div className="flex items-baseline justify-between gap-3">
-                  <h3 className="font-display text-2xl italic font-medium text-[var(--color-ink-900)]">
-                    {item.name}
-                  </h3>
-                  {item.meta && <span className="kbd shrink-0">{item.meta}</span>}
+          <nav aria-label="Services" className="mt-10 flex flex-wrap gap-x-7 gap-y-3">
+            {services.map((s) => (
+              <a
+                key={s.slug}
+                href={`#${s.slug}`}
+                className="text-sm font-semibold underline decoration-[rgba(35,20,13,0.3)] underline-offset-[6px] hover:decoration-[var(--color-brand-clay)]"
+              >
+                {s.label}
+                <span className="ml-2 font-normal text-[var(--color-ink-500)]">from {s.from}</span>
+              </a>
+            ))}
+          </nav>
+        </div>
+      </section>
+
+      <section className="bg-[var(--color-brand-deep)] text-[var(--color-paper)]">
+        <div className="mx-auto grid max-w-[1480px] gap-x-20 gap-y-20 px-5 py-20 md:grid-cols-2 md:px-8 md:py-28">
+          {priceList.map((group) => {
+            const service = services.find((s) => s.title === group.group)
+            return (
+              <div key={group.group} id={service?.slug} className="scroll-mt-28">
+                <div className="flex items-baseline justify-between gap-4 border-b border-[rgba(201,161,90,0.45)] pb-4">
+                  <h2 className="font-display text-[2.1rem] font-medium leading-none tracking-[-0.02em] md:text-[2.75rem]">
+                    {service?.label ?? group.group}
+                  </h2>
+                  {service && (
+                    <p className="shrink-0 text-sm text-[rgba(241,232,216,0.6)]">
+                      {service.duration.replace('h', 'hours')}
+                    </p>
+                  )}
                 </div>
 
-                <dl className="mt-4 space-y-1.5">
-                  {item.tiers.map(([label, price], i) => (
-                    <div
-                      key={label || i}
-                      className="flex items-baseline gap-3 border-b border-dotted border-[rgba(58,27,20,0.18)] pb-1.5 last:border-0"
-                    >
-                      <dt className="text-sm text-[var(--color-ink-700)]">{label || 'Price'}</dt>
-                      <span className="flex-1" />
-                      <dd className="font-display text-lg italic text-[var(--color-brand-clay)]">
-                        {price}
-                      </dd>
-                    </div>
-                  ))}
+                <dl className="mt-7 space-y-5">
+                  {group.items.map((item) =>
+                    item.tiers.length === 1 && !item.tiers[0][0] ? (
+                      <PriceLine
+                        key={item.name}
+                        name={item.name}
+                        note={item.meta}
+                        price={item.tiers[0][1]}
+                        tone="dark"
+                      />
+                    ) : (
+                      <div key={item.name}>
+                        <dt className="text-[var(--color-paper)]">
+                          {item.name}
+                          {item.meta && (
+                            <span className="ml-2 text-sm text-[rgba(241,232,216,0.55)]">
+                              {item.meta}
+                            </span>
+                          )}
+                        </dt>
+                        <dd className="mt-2">
+                          <dl className="space-y-1.5 border-l border-[rgba(201,161,90,0.25)] pl-4 text-[0.95rem]">
+                            {item.tiers.map(([label, price], i) => (
+                              <PriceLine
+                                key={label || i}
+                                name={label || 'Price'}
+                                price={price}
+                                tone="dark"
+                              />
+                            ))}
+                          </dl>
+                        </dd>
+                      </div>
+                    ),
+                  )}
                 </dl>
-              </li>
-            ))}
-          </ul>
-        </Section>
-      ))}
+              </div>
+            )
+          })}
+        </div>
+      </section>
 
-      <Section
-        eyebrow="good to know"
-        title="Before you book."
-        description="Two things worth knowing, so the price you see is the price you pay."
-      >
-        <ul className="grid gap-3 md:grid-cols-2">
-          {priceNotes.map((note) => (
-            <li key={note} className="card flex items-start gap-3 p-5">
-              <span className="mt-0.5 grid h-7 w-7 shrink-0 place-items-center rounded-full bg-[var(--color-brand-gold)] text-[var(--color-ink-900)]">
-                <Info size={14} />
-              </span>
-              <span className="text-sm">{note}</span>
-            </li>
-          ))}
-        </ul>
-
-        <Link href="/rezervasyon" className="btn btn-primary mt-8">
-          Request an appointment <ArrowUpRight size={16} />
-        </Link>
-      </Section>
+      <section className="py-20 md:py-28">
+        <div className="mx-auto grid max-w-[1480px] gap-12 px-5 md:grid-cols-12 md:px-8">
+          <div className="md:col-span-5">
+            <h2 className="font-display text-[2.4rem] font-medium leading-[1.02] tracking-[-0.02em] md:text-[3.4rem]">
+              Before you book
+            </h2>
+          </div>
+          <div className="md:col-span-6 md:col-start-7">
+            <ul className="space-y-4 text-lg leading-relaxed text-[var(--color-ink-700)]">
+              {priceNotes.map((note) => (
+                <li key={note} className="border-b border-[rgba(35,20,13,0.14)] pb-4">
+                  {note}
+                </li>
+              ))}
+            </ul>
+            <div className="mt-9 flex flex-wrap gap-3">
+              <Link href="/rezervasyon" className="btn btn-primary">
+                Book an appointment
+              </Link>
+              <Link href="/galeri" className="btn btn-ghost">
+                See the work
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
     </>
   )
 }
